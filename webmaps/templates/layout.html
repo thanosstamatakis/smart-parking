@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<head>
+          <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    {% if title %}
+        <title>{{ title }}</title>
+    {% else %}
+        <title>Thanos Website</title>
+    {%endif%}
+</head>
+<body>
+  <nav>
+      <div class="nav-wrapper">
+        <a href="{{ url_for('home') }}" class="brand-logo">Logo</a>
+        <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        <ul id="nav-mobile" class="right hide-on-med-and-down">
+          <li><a href="{{ url_for('about') }}">About</a></li>
+        </ul>
+      </div>
+    </nav>
+    <!-- Sidenav container  -->
+    <ul class="sidenav" id="mobile-demo">
+      <li><a href="{{ url_for('about') }}">About</a></li>
+    </ul>  
+<h1>Thanos Stamatakis</h1>
+{% block content %}{% endblock %}
+
+<!-- Compiled and minified JavaScript -->
+<script>
+
+src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js">
+
+// Initialization of sidenav on medium or smaller screens
+
+document.addEventListener('DOMContentLoaded', function() {
+  var elems = document.querySelectorAll('.sidenav');
+  var instances = M.Sidenav.init(elems, options);
+});
+</script>
+
+</body>
+</html>
