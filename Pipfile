@@ -9,6 +9,7 @@ name = "pypi"
 flask = "*"
 flask-bcrypt = "*"
 flask-login = "*"
+pyyaml = "*"
 
 [requires]
 python_version = "3.6"
