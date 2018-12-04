@@ -3,6 +3,7 @@ from config import CONFIGURATION
 from flask import Flask
 
 APP = Flask(__name__)
+APP.register_blueprint(app, url_prefix='app')
 # APP.secret_key = CONFIGURATION.secret_key
 APP.config['SERVER_NAME'] = CONFIGURATION.get_server_name()
 
