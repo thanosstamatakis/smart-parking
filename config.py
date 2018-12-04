@@ -1,4 +1,4 @@
-"""This module contains the Config class"""
+""" This module contains the Config class. """
 import os.path
 
 import yaml

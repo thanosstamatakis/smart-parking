@@ -1,10 +1,14 @@
-from webmaps import app
+""" This is the main application module. """
 from config import CONFIGURATION
 from flask import Flask
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager
 
 APP = Flask(__name__)
-APP.register_blueprint(app, url_prefix='app')
-# APP.secret_key = CONFIGURATION.secret_key
+BCRYPT = Bcrypt(APP)
+LOGGIN_MANAGER = LoginManager(APP)
+
+APP.secret_key = CONFIGURATION.secret_key
 APP.config['SERVER_NAME'] = CONFIGURATION.get_server_name()
 
 if __name__ == '__main__':

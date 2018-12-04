@@ -1,18 +1,19 @@
-from flask import render_template, url_for, flash, redirect, request
-from webmaps import app, bcrypt
-from flask_login import login_user, logout_user, current_user, login_required
+""" This module contains all the web app urls. """
+from flask import render_template, request
+from app import APP
 
 
-@app.route("/")
+@APP.route("/")
 def landing():
+    print('Hello')
     return render_template("landing.html")
 
 
-@app.route("/home")
-def home():
+@APP.route("/home")
+def home(request):
     return render_template("home.html", title='Home')
 
 
-@app.route("/about")
-def about():
+@APP.route("/about")
+def about(request):
     return render_template("about.html", title='About')
