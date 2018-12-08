@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-</head>
-<body>
-    <h2>This is the Landing Page</h2>
-</body>
-</html>
+{% extends "layout.html" %}
+{% block content %}
+<title>Landing</title>
+<p>Welcome to the smart paring school project.</p>
+<a href="{{ url_for('home') }}" class="waves-effect waves-light btn">Home</a>
+{% endblock %}
