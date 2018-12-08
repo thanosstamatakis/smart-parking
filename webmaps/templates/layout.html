@@ -11,7 +11,7 @@
   {% if title %}
   <title>{{ title }}</title>
   {% else %}
-  <title>Thanos Website</title>
+  <title>Smart Parking</title>
   {%endif%}
 </head>
 
@@ -30,7 +30,7 @@
     <li><a href="{{ url_for('about') }}">About</a></li>
   </ul>
   {% block content %}{% endblock %}
-
+  {% block map %}{% endblock %}
   <!-- Compiled and minified JavaScript -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 

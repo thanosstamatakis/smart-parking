@@ -4,3 +4,6 @@
 <p>Welcome to the smart paring school project.</p>
 <a href="{{ url_for('home') }}" class="waves-effect waves-light btn">Home</a>
 {% endblock %}
+{% block map %}
+    {% include "map.html" %}
+{% endblock %}
