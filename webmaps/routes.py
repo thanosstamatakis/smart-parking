@@ -5,7 +5,6 @@ from webmaps import APP
 
 @APP.route("/")
 def landing():
-    print('Hello')
     return render_template("landing.html")
 
 
