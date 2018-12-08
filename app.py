@@ -1,10 +1,10 @@
 """ This is the main application module. """
 from config import CONFIGURATION
-from flask import Flask
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
+from webmaps.routes import *
+from webmaps import APP
 
-APP = Flask(__name__)
 BCRYPT = Bcrypt(APP)
 LOGGIN_MANAGER = LoginManager(APP)
 

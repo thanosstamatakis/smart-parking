@@ -1,4 +1,5 @@
 backend:
+  app_name: 'main_app'
   secret_key: '..6nX$Y!$FDe)sn\'
   backend_ip: 'localhost' # The ip the backend will run localhost or 0.0.0.0 for deployment
   server_ip: 'localhost' # The ip of the vm the backend is hosted.

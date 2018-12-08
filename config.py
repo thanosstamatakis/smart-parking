@@ -13,7 +13,7 @@ class Config(object):
         # self.db_conn = 'db0.local'
         if os.path.isfile('config/config.yaml'):
             config_dict = yaml.safe_load(open('config/config.yaml', 'r'))
-
+            self.app_name = config_dict['backend']['app_name']
             self.secret_key = config_dict['backend']['secret_key']
             self.server_ip = config_dict['backend']['server_ip']
             self.backend_ip = config_dict['backend']['backend_ip']
