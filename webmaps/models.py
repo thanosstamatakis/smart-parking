@@ -1,4 +1,8 @@
 """ Module containing the base classes """
+import logging
+from config import CONFIGURATION
+
+LOGGER = CONFIGURATION.get_logger(__name__)
 
 
 class Placemark():
@@ -15,4 +19,4 @@ class Placemark():
 
     def save_to_db(self):
         """ Save placemark to database """
-        print("SAVED TO DB")
+        LOGGER.debug("SAVED TO DB")
