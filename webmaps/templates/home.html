@@ -1,4 +1,8 @@
 {% extends "layout.html" %}
 {% block content %}
     <h2>This is the {{ title }} page</h2>
+    <a id="show_map_btn" class="waves-effect waves-light btn">Show Map</a>
+{% endblock %}
+{% block map %}
+    {% include "map.html" %}
 {% endblock %}
