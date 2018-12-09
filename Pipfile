@@ -8,6 +8,8 @@ name = "pypi"
 "pep8" = "*"
 folium = "*"
 pandas = "*"
+fastkml = "*"
+lxml = "*"
 
 [packages]
 flask = "*"
