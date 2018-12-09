@@ -12,12 +12,15 @@ def create_map():
 
 
 def read_kml(fname='webmaps/kml/population.kml'):
+    """ Parse kml file to create Placemark objects and store to db """
     kml = KML()
     kml.from_string(open(fname).read().encode('utf-8'))
     points = dict()
-    features = list(kml.features())
-    folder_object = list(features[0].features())
+    # Get the base folder object from kml
+    folder_object = list(list(kml.features())[0].features())
+    # Get the placemark tags from kml
     placemarks = list(folder_object[0].features())
+    # Parse placemark tags to create placemark objects and store
     for placemark in placemarks:
         mark = models.Placemark(placemark.name, placemark._geometry.geometry)
         mark.save_to_db()
