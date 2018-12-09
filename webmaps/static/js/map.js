@@ -11,7 +11,7 @@ var map_c69f8540565a476887a0a3ab633e71e1 = L.map(
     layers: [],
     worldCopyJump: false,
     crs: L.CRS.EPSG3857,
-    zoomControl: true,
+    zoomControl: false,
 });
 
     
@@ -29,3 +29,21 @@ var tile_layer_1c1507a935ac402fac767e266a534f70 = L.tileLayer(
     "subdomains": "abc",
     "tms": false
 }).addTo(map_c69f8540565a476887a0a3ab633e71e1);
+
+
+
+$(document).ready(function () {
+    $('.fixed-action-btn').floatingActionButton();
+});
+
+
+
+function zoomOutToggle() {
+    map_c69f8540565a476887a0a3ab633e71e1.zoomOut();
+}
+
+
+
+function zoomInToggle() {
+    map_c69f8540565a476887a0a3ab633e71e1.zoomIn();
+}
