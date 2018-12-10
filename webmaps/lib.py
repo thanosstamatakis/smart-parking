@@ -2,6 +2,9 @@
 import folium
 from fastkml.kml import KML
 from . import models
+from config import CONFIGURATION
+
+LOGGER = CONFIGURATION.get_logger(__name__)
 
 
 def create_map():
@@ -21,7 +24,16 @@ def read_kml(fname='webmaps/kml/population.kml'):
     # Get the placemark tags from kml
     placemarks = list(folder_object[0].features())
     # Parse placemark tags to create placemark objects and store
+    no_population = 0
     for placemark in placemarks:
-        mark = models.Placemark(placemark.name, placemark._geometry.geometry)
+        try:
+            population = int(placemark.description.split('Population')[1].split('atr-value">')[1].split('<')[0])
+        except (IndexError, ValueError):
+            no_population += 1
+            LOGGER.debug(f"Population not found! {no_population}")
+            population = 0
+        mark = models.Placemark(placemark.name, population, placemark.geometry)
         mark.save_to_db()
     return points
+
+read_kml()

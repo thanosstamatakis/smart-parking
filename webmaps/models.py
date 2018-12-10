@@ -8,10 +8,11 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 class Placemark():
     """ Class representing a placemark retrieved from KML file """
 
-    def __init__(self, name, coordinates):
+    def __init__(self, name, population, coordinates):
         """ Class constructor """
         self.name = name
         self.coordinates = self.get_coordinates(coordinates)
+        self.population = population
 
     def get_coordinates(self, coordinates):
         """ Sanitize Placemark coordinates and return the corrected dict """
