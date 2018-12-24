@@ -12,16 +12,20 @@ def create_map():
     """ Create a folium map object and save it as html in templates """
     if not os.path.exists('webmaps/templates/map.html'):
         LOGGER.debug('CREATED NEW PATH')
-        start_coords = (40.246269, 20.7339247)
+        center = read_kml()
+        start_coords = tuple(center)
         folium_map = folium.Map(location=start_coords, zoom_start=17)
         folium_map.save('webmaps/templates/map.html')
 
 
 def read_kml(fname='webmaps/kml/population.kml'):
-    """ Parse kml file to create Placemark objects and store to db """
+    """
+    Parse kml file to create Placemark objects, 
+    store to db and return the center of the map
+    """
     kml = KML()
     kml.from_string(open(fname).read().encode('utf-8'))
-    points = dict()
+    center = [0, 0]
     # Get the base folder object from kml
     folder_object = list(list(kml.features())[0].features())
     # Get the placemark tags from kml
@@ -36,9 +40,10 @@ def read_kml(fname='webmaps/kml/population.kml'):
             no_population += 1
             LOGGER.debug(f"Population not found! {no_population}")
             population = 0
+        center[1] += placemark.geometry._geoms[0]._coordinates[0]
+        center[0] += placemark.geometry._geoms[0]._coordinates[1]
         mark = models.Placemark(placemark.name, population, placemark.geometry)
         mark.save_to_db()
-    return points
-
-
-read_kml()
+    for index, _ in enumerate(center):
+        center[index] /= len(placemarks)
+    return center
