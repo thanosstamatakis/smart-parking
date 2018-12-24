@@ -3,15 +3,18 @@ import folium
 from fastkml.kml import KML
 from . import models
 from config import CONFIGURATION
+import os
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 
 
 def create_map():
     """ Create a folium map object and save it as html in templates """
-    start_coords = (38.246269, 21.7339247)
-    folium_map = folium.Map(location=start_coords, zoom_start=17)
-    folium_map.save('webmaps/templates/map.html')
+    if not os.path.exists('webmaps/templates/map.html'):
+        LOGGER.debug('CREATED NEW PATH')
+        start_coords = (40.246269, 20.7339247)
+        folium_map = folium.Map(location=start_coords, zoom_start=17)
+        folium_map.save('webmaps/templates/map.html')
 
 
 def read_kml(fname='webmaps/kml/population.kml'):
@@ -27,7 +30,8 @@ def read_kml(fname='webmaps/kml/population.kml'):
     no_population = 0
     for placemark in placemarks:
         try:
-            population = int(placemark.description.split('Population')[1].split('atr-value">')[1].split('<')[0])
+            population = int(placemark.description.split('Population')[
+                             1].split('atr-value">')[1].split('<')[0])
         except (IndexError, ValueError):
             no_population += 1
             LOGGER.debug(f"Population not found! {no_population}")
@@ -35,5 +39,6 @@ def read_kml(fname='webmaps/kml/population.kml'):
         mark = models.Placemark(placemark.name, population, placemark.geometry)
         mark.save_to_db()
     return points
+
 
 read_kml()

@@ -4,14 +4,15 @@ from webmaps import APP
 
 from . import lib
 
+
 @APP.route("/")
 def landing():
-    lib.create_map()
     return render_template("landing.html")
 
 
 @APP.route("/home")
 def home():
+    lib.create_map()
     return render_template("home.html", title='Home')
 
 

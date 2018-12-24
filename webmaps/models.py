@@ -20,4 +20,4 @@ class Placemark():
 
     def save_to_db(self):
         """ Save placemark to database """
-        LOGGER.debug("SAVED TO DB")
+        # LOGGER.debug("SAVED TO DB")
