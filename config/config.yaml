@@ -5,7 +5,7 @@ backend:
   server_ip: 'localhost' # The ip of the vm the backend is hosted.
   port: 5000 # The port the backend will connect.
   debug_mode: true
-  db_conn: 'localhost.localdomain' # The address of the database server.
+  db_conn: 'localhost' # The address of the database server.
   log_level: &log_level "DEBUG" # Use DEBUG for deployment purposes.
 logging:
   level: 'DEBUG'
