@@ -12,7 +12,7 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 
 def create_map():
     """ Create a folium map object and save it as html in templates """
-    if not os.path.exists('webmaps/templates/map.html'):
+    if not os.path.exists('templates/map.html'):
         LOGGER.debug('CREATED NEW PATH')
         center = read_kml()
         start_coords = tuple(center)
