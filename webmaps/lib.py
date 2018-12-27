@@ -1,9 +1,11 @@
 """ This module contains helper functions for webmap app """
-import folium
-from fastkml.kml import KML
-from . import models
-from config import CONFIGURATION
 import os
+
+import folium
+from config import CONFIGURATION
+from fastkml.kml import KML
+
+from . import models
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 
