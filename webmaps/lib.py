@@ -8,12 +8,12 @@ from fastkml.kml import KML
 from . import models
 
 LOGGER = CONFIGURATION.get_logger(__name__)
+PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
 
 
 def create_map():
     """ Create a folium map object and save it as html in templates """
-    if not os.path.exists('templates/map.html'):
-        LOGGER.debug('CREATED NEW PATH')
+    if not os.path.exists(PROJECT_PATH + '/webmaps/templates/map.html'):
         center = read_kml()
         start_coords = tuple(center)
         folium_map = folium.Map(location=start_coords, zoom_start=17)
