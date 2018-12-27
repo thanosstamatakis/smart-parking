@@ -15,6 +15,7 @@ class Config(object):
             self.secret_key = config_dict['backend']['secret_key']
             self.server_ip = config_dict['backend']['server_ip']
             self.backend_ip = config_dict['backend']['backend_ip']
+            self.db_conn = config_dict['backend']['db_conn']
             self.port = config_dict['backend']['port']
             self.debug_mode = config_dict['backend']['debug_mode']
             self.logging_level = config_dict['logging']['level']
