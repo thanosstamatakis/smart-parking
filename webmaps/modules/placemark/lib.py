@@ -1,9 +1,10 @@
 """ This module contains helper function for placemark api """
 import redis
+import logging
 from config import CONFIGURATION
 
-redis_conn = redis.Redis(CONFIGURATION.db_conn)
-redis_pipe = redis_conn.pipeline()
+redis_conn = redis.Redis(host=CONFIGURATION.db_conn, decode_responses=True)
+LOGGER = CONFIGURATION.get_logger(__name__)
 
 
 def get_placemark_objects():
@@ -14,11 +15,10 @@ def get_placemark_objects():
     redis_key = 'placemark'
     placemark_objects = redis_conn.smembers(redis_key)
     for obj in placemark_objects:
-        placemark_num = str(obj).split('.')[1]
-        placemark_attr = redis_pipe.hgetall(
-            ":".join((redis_key, placemark_num)))
-        response.append({'name': str(obj), 'population': str(placemark_attr['population']),
-                         'coordinates': str(placemark_attr['coordinates'])})
-    redis_pipe.execute()
+        placemark_num = obj.split('.')[1]
+        temp_key = ":".join((redis_key, placemark_num))
+        placemark_attr = redis_conn.hgetall(temp_key)
+        response.append({'name': obj, 'population': placemark_attr['population'],
+                         'polygon': placemark_attr['polygon'], 'point': placemark_attr['point']})
 
     return response
