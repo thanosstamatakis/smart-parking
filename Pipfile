@@ -17,6 +17,8 @@ flask-bcrypt = "*"
 flask-login = "*"
 pyyaml = "*"
 redis = "*"
+flask-restful = "*"
+flask-restplus = "*"
 
 [requires]
 python_version = "3.6"

@@ -4,12 +4,14 @@ from flask_bcrypt import Bcrypt
 from flask_login import LoginManager
 from webmaps.routes import *
 from webmaps import APP
+from webmaps.modules import API
 
 BCRYPT = Bcrypt(APP)
 LOGGIN_MANAGER = LoginManager(APP)
 
 APP.secret_key = CONFIGURATION.secret_key
 APP.config['SERVER_NAME'] = CONFIGURATION.get_server_name()
+API.init_app(APP)
 
 if __name__ == '__main__':
     APP.run(debug=CONFIGURATION.debug_mode,
