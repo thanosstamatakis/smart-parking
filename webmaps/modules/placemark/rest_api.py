@@ -1,6 +1,6 @@
 from flask_restplus import Resource, Namespace
 from . import lib
-import json
+import flask
 
 NAMESPACE = Namespace(
     'placemark', description='Api namespace representing a placemark')
@@ -14,8 +14,8 @@ class Placemark(Resource):
 
     def get(self):
         """ Return all placemark objects """
-        response = {}
+        response = []
         response = lib.get_placemark_objects()
 
-        response = json.dumps(response)
+        response = flask.jsonify(response)
         return response
