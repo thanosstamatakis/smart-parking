@@ -19,6 +19,7 @@ pyyaml = "*"
 redis = "*"
 flask-restful = "*"
 flask-restplus = "*"
+shapely = "*"
 
 [requires]
 python_version = "3.6"

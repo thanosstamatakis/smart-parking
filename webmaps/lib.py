@@ -42,10 +42,15 @@ def read_kml(fname='webmaps/kml/population.kml'):
             no_population += 1
             LOGGER.debug(f"Population not found! {no_population}")
             population = 0
-        center[1] += placemark.geometry._geoms[0]._coordinates[0]
-        center[0] += placemark.geometry._geoms[0]._coordinates[1]
+        try:
+            center[1] += placemark.geometry._geoms[0]._coordinates[0]
+            center[0] += placemark.geometry._geoms[0]._coordinates[1]
+        except AttributeError:
+            center[1] += 0
+            center[0] += 0
         mark = models.Placemark(placemark.name, population, placemark.geometry)
         mark.save_to_db()
     for index, _ in enumerate(center):
         center[index] /= len(placemarks)
     return center
+read_kml()
