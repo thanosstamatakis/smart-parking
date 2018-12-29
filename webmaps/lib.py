@@ -53,4 +53,3 @@ def read_kml(fname='webmaps/kml/population.kml'):
     for index, _ in enumerate(center):
         center[index] /= len(placemarks)
     return center
-read_kml()
