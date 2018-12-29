@@ -18,7 +18,6 @@ def get_placemark_objects():
         placemark_num = obj.split('.')[1]
         temp_key = ":".join((redis_key, placemark_num))
         placemark_attr = redis_conn.hgetall(temp_key)
-        response.append({'name': obj, 'population': placemark_attr['population'],
-                         'polygon': placemark_attr['polygon'], 'point': placemark_attr['point']})
+        response.append({'name': obj, **placemark_attr})
 
     return response
