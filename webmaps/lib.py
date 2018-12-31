@@ -20,13 +20,20 @@ def create_map():
         folium_map.save('webmaps/templates/map.html')
 
 
-def read_kml(fname='webmaps/kml/population.kml'):
+def read_kml(file):
     """
     Parse kml file to create Placemark objects, 
     store to db and return the center of the map
     """
     kml = KML()
-    kml.from_string(open(fname).read().encode('utf-8'))
+    try:
+        file.save('webmaps/kml/kml_file.kml')
+        file = 'webmaps/kml/kml_file.kml'
+    except AttributeError:
+        file = 'webmaps/kml/population.kml'
+        LOGGER.debug("File is not correct!")
+
+    kml.from_string(open(file).read().encode('utf-8'))
     center = [0, 0]
     # Get the base folder object from kml
     folder_object = list(list(kml.features())[0].features())
