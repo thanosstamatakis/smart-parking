@@ -1,0 +1,13 @@
+backend:
+  app_name: 'main_app'
+  secret_key: '..6nX$Y!$FDe)sn\'
+  backend_ip: 'localhost' # The ip the backend will run localhost or 0.0.0.0 for deployment
+  server_ip: 'localhost' # The ip of the vm the backend is hosted.
+  port: 8080 # The port the backend will connect.
+  debug_mode: true
+  db_conn: 'localhost' # The address of the database server.
+  log_level: &log_level "DEBUG" # Use DEBUG for deployment purposes.
+logging:
+  level: 'DEBUG'
+  format: '[%(asctime)s | %(levelname)s | %(name)s]: %(message)s'
+  datefmt: '%Y-%m-%d %H:%M:%S'
