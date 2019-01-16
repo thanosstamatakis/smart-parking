@@ -16,7 +16,7 @@ class User(Resource):
     @NAMESPACE.param('username', 'Username of user to be stored.')
     @NAMESPACE.param('password', 'Password of user to be stored.')
     def post(self):
-        """ Post function for storing user credentials to db """
+        """ Post function for storing user credentials to db. """
         args = request.args
         try:
             user_type = str(args['type'])
@@ -25,7 +25,11 @@ class User(Resource):
         except AttributeError:
             return 'User was unsuccessfuly stored. Check users credentials again.'
         new_user = User_Class(user_type, user_name, user_pass)
-        new_user.save_to_db()
+        response = new_user.check_if_user_exists()
+        if response == 'User does not exist':
+            new_user.save_to_db()
+            response = 'User was successfuly stored'
 
         # Response
-        return 'User was successfuly stored'
+        return response
+    

@@ -79,27 +79,48 @@ class User():
         """ Class constructor """
         self.user_type = user_type
         self.username = username
-        self.password = self._encrypt_password(password)
+        self.password = password
 
     def save_to_db(self):
         """ Store user credentials to db """
         # Save users number
+        enc_password = self._encrypt_password(self.password)
         redis_key = 'users'
         users = redis_con.smembers(redis_key)
+        users = list(users)
         if users:
             users_number = 1 + int(users[-1])
-
         else:
             users_number = 1
+
         redis_con.sadd(redis_key, str(users_number))
         LOGGER.debug(f'Save to key: {redis_key} : {users_number}')
         # Save users credentials
         redis_key = ":".join((redis_key, str(users_number)))
         user_dict = {'usertype': self.user_type,
-                     'username': self.username, 'password': self.password}
+                     'username': self.username, 'password': enc_password}
         redis_con.hmset(
             redis_key, user_dict)
         LOGGER.debug(f'Save to key: {redis_key} : {user_dict}')
+    
+    def check_if_user_exists(self):
+        """ Check if user is stored already in db and return according message. """
+        user_valid = {'user_name': False, 'password': False}
+        user_numbers = redis_con.smembers('users')
+        if not user_numbers:
+            return "No users in database."
+        for user_number in user_numbers:
+            if redis_con.hget(":".join(('users', str(user_number))), 'username') == self.username:
+                user_valid['user_name'] = True
+            usr_pass = redis_con.hget(":".join(('users', str(user_number))), 'password')
+            if BCRYPT.check_password_hash(usr_pass, self.password):
+                user_valid['password'] = True
+        if user_valid.values == [True, True]:
+            return 'User exists in DB'
+        elif user_valid.values == [True, False]:
+            return 'Wrong Password'
+        else:
+            return 'User does not exist'
 
     def _encrypt_password(self, password):
         """ Returns user encrypted password"""
