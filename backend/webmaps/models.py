@@ -2,6 +2,7 @@
 import logging
 import redis
 import re
+from webmaps import BCRYPT
 from config import CONFIGURATION
 from shapely.geometry import MultiPoint
 
@@ -42,7 +43,7 @@ class Placemark():
         try:
             polygon_points = self.coordinates['polygon'].strip('()').split(',')
         except AttributeError:
-            return '0' 
+            return '0'
         polygon_points_sanitized = []
         for point in polygon_points:
             polygon_points_sanitized.append(point.split(' '))
@@ -69,3 +70,38 @@ class Placemark():
         redis_con.hmset(
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
+
+
+class User():
+    """ Class representing an App User. """
+
+    def __init__(self, user_type, username, password):
+        """ Class constructor """
+        self.user_type = user_type
+        self.username = username
+        self.password = self._encrypt_password(password)
+
+    def save_to_db(self):
+        """ Store user credentials to db """
+        # Save users number
+        redis_key = 'users'
+        users = redis_con.smembers(redis_key)
+        if users:
+            users_number = 1 + int(users[-1])
+
+        else:
+            users_number = 1
+        redis_con.sadd(redis_key, str(users_number))
+        LOGGER.debug(f'Save to key: {redis_key} : {users_number}')
+        # Save users credentials
+        redis_key = ":".join((redis_key, str(users_number)))
+        user_dict = {'usertype': self.user_type,
+                     'username': self.username, 'password': self.password}
+        redis_con.hmset(
+            redis_key, user_dict)
+        LOGGER.debug(f'Save to key: {redis_key} : {user_dict}')
+
+    def _encrypt_password(self, password):
+        """ Returns user encrypted password"""
+        pass_hash = BCRYPT.generate_password_hash(password, 10)
+        return pass_hash
