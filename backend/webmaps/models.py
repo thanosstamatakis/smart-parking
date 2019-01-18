@@ -17,10 +17,10 @@ class Placemark():
     def __init__(self, name, population, coordinates):
         """ Class constructor """
         self.name = str(name)
-        self.coordinates = self.get_coordinates(coordinates)
+        self.coordinates = self._get_coordinates(coordinates)
         self.population = str(population)
 
-    def get_coordinates(self, coordinates):
+    def _get_coordinates(self, coordinates):
         """ Sanitize Placemark coordinates and return the corrected dict """
         try:
             point = re.search(COORDS_REGEX, str(coordinates)).group(1)
@@ -36,7 +36,7 @@ class Placemark():
 
         return coordinates
 
-    def get_centroid(self):
+    def _get_centroid(self):
         """ Extract centroid from coordinates """
         new_list = []
         list1 = []
@@ -66,7 +66,7 @@ class Placemark():
         hash_to_store = {'point': self.coordinates['point'],
                          'polygon': self.coordinates['polygon'],
                          'population': self.population,
-                         'centroid': self.get_centroid()}
+                         'centroid': self._get_centroid()}
         redis_con.hmset(
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
@@ -80,6 +80,33 @@ class User():
         self.user_type = user_type
         self.username = username
         self.password = password
+
+    def check_if_user_exists(self):
+        """ Check if user is stored already in db and return according message. """
+        user_valid = {'user_name': False, 'password': False}
+        user_numbers = redis_con.smembers('users')
+        if not user_numbers:
+            return "No users in database."
+        for user_number in user_numbers:
+            temp_username = str(redis_con.hget(
+                ":".join(('users', str(user_number))), 'username'))
+            if temp_username == self.username:
+                user_valid['user_name'] = True
+            usr_pass = redis_con.hget(
+                ":".join(('users', str(user_number))), 'password')
+            if BCRYPT.check_password_hash(usr_pass, self.password):
+                user_valid['password'] = True
+        if list(user_valid.values()) == [True, True]:
+            return 'User exists in DB'
+        elif list(user_valid.values()) == [True, False]:
+            return 'Wrong Password'
+        else:
+            return 'User does not exist'
+
+    def _encrypt_password(self, password):
+        """ Returns user encrypted password"""
+        pass_hash = BCRYPT.generate_password_hash(password, 10)
+        return pass_hash
 
     def save_to_db(self):
         """ Store user credentials to db """
@@ -102,27 +129,3 @@ class User():
         redis_con.hmset(
             redis_key, user_dict)
         LOGGER.debug(f'Save to key: {redis_key} : {user_dict}')
-    
-    def check_if_user_exists(self):
-        """ Check if user is stored already in db and return according message. """
-        user_valid = {'user_name': False, 'password': False}
-        user_numbers = redis_con.smembers('users')
-        if not user_numbers:
-            return "No users in database."
-        for user_number in user_numbers:
-            if redis_con.hget(":".join(('users', str(user_number))), 'username') == self.username:
-                user_valid['user_name'] = True
-            usr_pass = redis_con.hget(":".join(('users', str(user_number))), 'password')
-            if BCRYPT.check_password_hash(usr_pass, self.password):
-                user_valid['password'] = True
-        if user_valid.values == [True, True]:
-            return 'User exists in DB'
-        elif user_valid.values == [True, False]:
-            return 'Wrong Password'
-        else:
-            return 'User does not exist'
-
-    def _encrypt_password(self, password):
-        """ Returns user encrypted password"""
-        pass_hash = BCRYPT.generate_password_hash(password, 10)
-        return pass_hash
