@@ -12,10 +12,10 @@ parser.add_argument('kml-file', type=werkzeug.datastructures.FileStorage,
                     help='Kml file to be parsed', location='files', required=True)
 
 
-@NAMESPACE.route('/')
-class Placemark(Resource):
+@NAMESPACE.route('/all')
+class Placemarks(Resource):
     """
-    Api class placemark representing a placemark.
+    Api class placemark representing placemarks.
     """
 
     def get(self):
@@ -28,6 +28,12 @@ class Placemark(Resource):
 
         return response
 
+
+@NAMESPACE.route('/')
+class Placemark(Resource):
+    """
+    Api class placemark representing one placemark.
+    """
     @NAMESPACE.expect(parser)
     def post(self):
         """

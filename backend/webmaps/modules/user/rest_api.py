@@ -6,7 +6,7 @@ from flask import request
 # Project Files
 from . import lib
 from config import CONFIGURATION
-from webmaps.models import User as User_Class
+from webmaps.models.website import User as User_Class
 
 NAMESPACE = Namespace(
     'user', description='Api namespace representing an app user.')
@@ -24,15 +24,15 @@ class Validation(Resource):
     Api class for user validation.
     """
     @NAMESPACE.expect(user_model)
-    def post(self):
-        """ Post function for storing user credentials to db. """
+    def get(self):
+        """ Get function for checking user credentials. """
         args = request.args
         try:
             user_type = str(args['type'])
             user_name = str(args['username'])
             user_pass = str(args['password'])
         except AttributeError:
-            return 'User was unsuccessfuly stored. Check users credentials again.'
+            return 'Check users credentials.'
         user = User_Class(user_type, user_name, user_pass)
         response = user.check_if_user_exists()
 

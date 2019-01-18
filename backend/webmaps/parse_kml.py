@@ -1,10 +1,10 @@
 """ This module is responsible for parsing kml """
+# Python libs.
 import os
-
-from config import CONFIGURATION
 from fastkml.kml import KML
-
-from . import models
+# Project files.
+from config import CONFIGURATION
+from webmaps.models.webmap import Placemark
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
@@ -45,7 +45,7 @@ def read_kml(file):
         except AttributeError:
             center[1] += 0
             center[0] += 0
-        mark = models.Placemark(placemark.name, population, placemark.geometry)
+        mark = Placemark(placemark.name, population, placemark.geometry)
         mark.save_to_db()
     for index, _ in enumerate(center):
         center[index] /= len(placemarks)
