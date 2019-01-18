@@ -1,0 +1,23 @@
+#card-hover {
+    transition: box-shadow .3s;
+  }
+  #card-hover:hover {
+    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+  }
+
+  .card {
+    border: none;
+  }
+
+  #roundImage {
+    width: 70%;
+  }
+
+
+  html,body {
+    height: 100%;
+    background-color: #f9f9f9;
+    padding: 0;
+    margin-bottom: 0;
+    margin-top: 10em;
+  }

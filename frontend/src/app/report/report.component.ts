@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpProgressEvent, HttpEventType, HttpResponse } from '@angular/common/http';
+import { DataService } from '../data.service';
+import { NgbProgressbarConfig } from '@ng-bootstrap/ng-bootstrap';
+import { config } from 'rxjs';
+import { $ } from 'protractor';
+import { NONE_TYPE } from '@angular/compiler/src/output/output_ast';
 
 @Component({
   selector: 'app-report',
@@ -10,36 +15,42 @@ export class ReportComponent implements OnInit {
 
   selectedFile: File = null;
 
-  upload_msg: string = "";
+  upload_msg: number = null;
 
-  onFileSelected(event){
-    this.selectedFile = <File>event.target.files[0];
-    console.log(this.selectedFile);
+  show: Boolean = true;
+
+  onFileSelected(event) {
+    this.selectedFile = this.data.FileSelected(event);
   }
 
-  onUpload(){
-    let formData = new FormData();
-    formData.append('kml-file', this.selectedFile, this.selectedFile.name);
-    console.log(formData);
-    this.http.post('http://localhost:8080/api/placemark/', formData, 
-    {reportProgress: true,
-    observe: 'events'})
-    .subscribe((event) => {
-      if (event.type === HttpEventType.UploadProgress) {
+  onUpload() {
+    this.data.UploadFile(this.selectedFile).subscribe(
+      (event) => {
+        if (event.type === HttpEventType.UploadProgress) {
           const percentDone = Math.round(100 * event.loaded / event.total);
-          const upload_msg = `${percentDone}% Uploaded`;
-          console.log(typeof(upload_msg));
-      }
-    }, (error) => {
-      console.log('Error', error);
-    });
+          this.upload_msg = percentDone;
+          this.show = (percentDone == 100);
+        }
+      }, (error) => {
+        console.log('Error sending file to server: ', error);
+      });
 
   }
 
-  constructor(private http: HttpClient) { }
-  
+  hideBar() {
+
+  }
+
+  constructor(private data: DataService, config: NgbProgressbarConfig) {
+    config.max = 100;
+    config.striped = true;
+    config.animated = true;
+    config.type = 'success';
+    config.height = '20px';
+  }
+
   ngOnInit() {
-    
+
   }
 
 

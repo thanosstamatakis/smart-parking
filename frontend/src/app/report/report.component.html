@@ -1,3 +1,67 @@
-<h1>File Upload</h1>
-<input type="file" class="btn-file" (change)="onFileSelected($event)">
-<button type="button" class="btn btn-primary" (click)="onUpload()">Upload</button>
+<html>
+
+<body>
+    <div class="row">
+        <div class="col-lg-4 col-sm-3 text-center mb-4 mx-auto">
+            <div class="card" id="card-hover">
+                <div class="card-body">
+                    <img id="roundImage" class="rounded-circle img-fluid d-block mx-auto" src="assets/sprites/plus.svg"
+                        alt="">
+                    <div class="card-body">
+                        <h2 class="card-title">Upload KML file</h2>
+                        <h6 class="card-subtitle mb-2 text-muted">Upload a KML file to draw new polygons on the
+                            homepage
+                            map.</h6>
+                        <input type="file" class="btn-file" (change)="onFileSelected($event)">
+                        <button type="button" class="btn btn-primary" (click)="onUpload()">Upload</button>
+                        <p [hidden]="show">
+                            <ngb-progressbar class="bar" value="{{upload_msg}}"></ngb-progressbar>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-sm-3 text-center mb-4 mx-auto">
+            <div class="card" id="card-hover">
+                <div class="card-body">
+                    <img id="roundImage" class="rounded-circle img-fluid d-block mx-auto" src="assets/sprites/minus.svg"
+                        alt="">
+                    <div class="card-body">
+                        <h2 class="card-title">Delete database data</h2>
+                        <h6 class="card-subtitle mb-2 text-muted">Upload a KML file to draw new polygons on the
+                            homepage
+                            map.</h6>
+                        <input type="file" class="btn-file" (change)="onFileSelected($event)">
+                        <button type="button" class="btn btn-primary" (click)="onUpload()">Upload</button>
+                        <p [hidden]="show">
+                            <ngb-progressbar class="bar" value="{{upload_msg}}"></ngb-progressbar>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-sm-3 text-center mb-4 mx-auto">
+            <div class="card" id="card-hover">
+                <div class="card-body">
+                    <img id="roundImage" class="rounded-circle img-fluid d-block mx-auto" src="assets/sprites/gears.svg"
+                        alt="">
+                    <div class="card-body">
+                        <h2 class="card-title">Modify demand curve</h2>
+                        <h6 class="card-subtitle mb-2 text-muted">Upload a KML file to draw new polygons on the
+                            homepage
+                            map.</h6>
+                        <input type="file" class="btn-file" (change)="onFileSelected($event)">
+                        <button type="button" class="btn btn-primary" (click)="onUpload()">Upload</button>
+                        <p [hidden]="show">
+                            <ngb-progressbar class="bar" value="{{upload_msg}}"></ngb-progressbar>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
