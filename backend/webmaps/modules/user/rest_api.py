@@ -11,6 +11,11 @@ from webmaps.models import User as User_Class
 NAMESPACE = Namespace(
     'user', description='Api namespace representing an app user.')
 LOGGER = CONFIGURATION.get_logger(__name__)
+user_model = NAMESPACE.parser()
+user_model.add_argument('type', type=str, default='normal',
+                        help='Type of user.')
+user_model.add_argument('username', type=str, help='Username of user.')
+user_model.add_argument('password', type=str, help='Password of user.')
 
 
 @NAMESPACE.route('/validation')
@@ -18,9 +23,7 @@ class Validation(Resource):
     """
     Api class for user validation.
     """
-    @NAMESPACE.param('type', 'Type of user.')
-    @NAMESPACE.param('username', 'Username of user to be stored.')
-    @NAMESPACE.param('password', 'Password of user to be stored.')
+    @NAMESPACE.expect(user_model)
     def post(self):
         """ Post function for storing user credentials to db. """
         args = request.args
@@ -42,9 +45,7 @@ class AddUser(Resource):
     """
     Api class for adding new user.
     """
-    @NAMESPACE.param('type', 'Type of user.')
-    @NAMESPACE.param('username', 'Username of user to be stored.')
-    @NAMESPACE.param('password', 'Password of user to be stored.')
+    @NAMESPACE.expect(user_model)
     def post(self):
         """ Post function for storing user credentials to db. """
         args = request.args
