@@ -71,3 +71,14 @@ class Placemark():
         redis_con.hmset(
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
+
+
+class Polygon():
+    """ Class representing a polygon in map. """
+
+    def __init__(self, name, parking_slots, demand, fixed_demand):
+        """ Class constructor """
+        self.name = str(name)
+        self.parking_slots = parking_slots
+        self.demand = demand
+        self.fixed_demand = fixed_demand
