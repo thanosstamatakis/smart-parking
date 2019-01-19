@@ -24,7 +24,7 @@ class User():
         user_valid = {'user_name': False, 'password': False}
         user_numbers = redis_con.smembers('users')
         if not user_numbers:
-            return "No users in database."
+            return "User does not exist"
         for user_number in user_numbers:
             temp_username = str(redis_con.hget(
                 ":".join(('users', str(user_number))), 'username'))
