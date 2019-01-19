@@ -79,7 +79,7 @@ export class HomeComponent implements OnInit {
         this.languages$[individual].polygon = this.sanitizeCoords(this.languages$[individual].polygon, this.insertToString);
         polygonCoordData = JSON.parse(this.languages$[individual].polygon);
         if (polygonCoordData[0]!=0){
-          polygonToDraw = L.polygon(polygonCoordData, {color: 'black'});
+          polygonToDraw = L.polygon(polygonCoordData, {fillColor: 'black', stroke: false, fillOpacity:0.14});
           polygonToDraw.addTo(myfrugalmap);
           blockNumber = this.sanitizeName(this.languages$[individual].name);
           blockPopulation = this.languages$[individual].population;

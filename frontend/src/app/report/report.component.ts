@@ -19,8 +19,11 @@ export class ReportComponent implements OnInit {
 
   show: Boolean = true;
 
+  fileName: string = "";
+
   onFileSelected(event) {
     this.selectedFile = this.data.FileSelected(event);
+    this.fileName = this.selectedFile.name;
   }
 
   onUpload() {
@@ -37,10 +40,6 @@ export class ReportComponent implements OnInit {
 
   }
 
-  hideBar() {
-
-  }
-
   constructor(private data: DataService, config: NgbProgressbarConfig) {
     config.max = 100;
     config.striped = true;
@@ -50,7 +49,6 @@ export class ReportComponent implements OnInit {
   }
 
   ngOnInit() {
-
   }
 
 

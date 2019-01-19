@@ -14,7 +14,7 @@ export class DataService {
   constructor(private http: HttpClient) { }
 
   getLanguages() {
-    return this.http.get('http://localhost:8080/api/placemark/')
+    return this.http.get('http://localhost:8080/api/placemark/all')
   }
 
   FileSelected(event) {
