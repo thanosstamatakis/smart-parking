@@ -1,3 +1,5 @@
 # Memory Chached
 __pycache__/
 .vscode
+dist/
+.cache
