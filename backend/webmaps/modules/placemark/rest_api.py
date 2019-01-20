@@ -7,8 +7,8 @@ import werkzeug
 NAMESPACE = Namespace(
     'placemark', description='Api namespace representing a placemark.')
 
-parser = NAMESPACE.parser()
-parser.add_argument('kml-file', type=werkzeug.datastructures.FileStorage,
+kml_model = NAMESPACE.parser()
+kml_model.add_argument('kml-file', type=werkzeug.datastructures.FileStorage,
                     help='Kml file to be parsed', location='files', required=True)
 
 
@@ -27,6 +27,14 @@ class Placemarks(Resource):
         response = flask.jsonify(response)
 
         return response
+    
+    def post(self):
+        """ Delete all placemark objects. """
+        response = lib.delete_placemarks()
+        # Response
+        response = f'{len(response)} keys deleted from database.'
+
+        return response
 
 
 @NAMESPACE.route('/')
@@ -34,13 +42,13 @@ class Placemark(Resource):
     """
     Api class placemark representing one placemark.
     """
-    @NAMESPACE.expect(parser)
+    @NAMESPACE.expect(kml_model)
     def post(self):
         """
         Input a new kml file and store information to db.
         """
 
-        kml_file = parser.parse_args()['kml-file']
+        kml_file = kml_model.parse_args()['kml-file']
 
         # Response
         response = "File parsing was unsuccessful."

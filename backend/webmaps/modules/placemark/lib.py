@@ -21,3 +21,14 @@ def get_placemark_objects():
         response.append({'name': obj, **placemark_attr})
 
     return response
+
+def delete_placemarks():
+    """
+    Delete all placemarks from redis database.
+    """
+    redis_pipe = redis_conn.pipeline()
+    for key in redis_conn.scan_iter(match='placemark*'):
+       redis_pipe.delete(key)
+    response = redis_pipe.execute()
+
+    return response
