@@ -4,7 +4,7 @@ import os
 from fastkml.kml import KML
 # Project files.
 from config import CONFIGURATION
-from webmaps.models.webmap import Placemark
+from webmaps.models.webmap import Polygon
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
@@ -45,7 +45,8 @@ def read_kml(file):
         except AttributeError:
             center[1] += 0
             center[0] += 0
-        mark = Placemark(placemark.name, population, placemark.geometry)
+        mark = Polygon(placemark.name, population,
+                       placemark.geometry, 20, [1, 2, 3], [1, 1, 1])
         mark.save_to_db()
     for index, _ in enumerate(center):
         center[index] /= len(placemarks)
