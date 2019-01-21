@@ -12,7 +12,7 @@ PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
 
 class KmlParser():
     """
-    Class responsible for parsing kml file to create Placemark objects, 
+    Class responsible for parsing kml file to create Placemark objects,
     store to db and return the center of the map.
     """
 
@@ -22,13 +22,7 @@ class KmlParser():
 
     def parse(self):
         kml = KML()
-        try:
-            self.kml_file.save('webmaps/kml/kml_file.kml')
-            self.kml_file = 'webmaps/kml/kml_file.kml'
-        except AttributeError:
-            self.kml_file = 'webmaps/kml/population.kml'
-            LOGGER.debug("File is not correct!")
-
+        self._save_file()
         kml.from_string(open(self.kml_file).read().encode('utf-8'))
         center = [0, 0]
         # Get the base folder object from kml
@@ -58,3 +52,13 @@ class KmlParser():
             center[index] /= len(placemarks)
 
         return center
+
+    def _save_file(self):
+        """ Save kml file if it doesn't aleady exist. """
+        try:
+            if not os.path.exists(os.path.realpath('webmaps/kml/kml_file.kml')):
+                self.kml_file.save('webmaps/kml/kml_file.kml')
+            self.kml_file = 'webmaps/kml/kml_file.kml'
+        except AttributeError:
+            self.kml_file = 'webmaps/kml/population.kml'
+            LOGGER.debug("File is not correct!")
