@@ -9,7 +9,7 @@ NAMESPACE = Namespace(
 
 kml_model = NAMESPACE.parser()
 kml_model.add_argument('kml-file', type=werkzeug.datastructures.FileStorage,
-                    help='Kml file to be parsed', location='files', required=True)
+                       help='Kml file to be parsed', location='files', required=True)
 
 
 @NAMESPACE.route('/all')
@@ -27,8 +27,8 @@ class Placemarks(Resource):
         response = flask.jsonify(response)
 
         return response
-    
-    def post(self):
+
+    def delete(self):
         """ Delete all placemark objects. """
         response = lib.delete_placemarks()
         # Response
