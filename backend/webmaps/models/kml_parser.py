@@ -1,4 +1,4 @@
-""" This module is responsible for parsing kml """
+""" This module represents a KML Parser model. """
 # Python libs.
 import os
 from fastkml.kml import KML
