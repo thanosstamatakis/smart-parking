@@ -1,0 +1,16 @@
+#card-hover {
+    transition: box-shadow .3s;
+  }
+  #card-hover:hover {
+    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+  }
+
+  .card {
+    border: none;
+  }
+
+  #roundImage {
+    height: 17em;
+    width: 17em;
+    margin-left: 3em;
+  }
