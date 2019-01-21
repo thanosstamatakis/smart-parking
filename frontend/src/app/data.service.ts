@@ -26,7 +26,7 @@ export class DataService {
   UploadFile(file: File) {
     let formData = new FormData();
     formData.append('kml-file', file, file.name);
-    return this.http.post('http://localhost:8080/api/placemark/', formData,
+    return this.http.post('http://localhost:8080/api/placemark/file', formData,
       {
         reportProgress: true,
         observe: 'events'

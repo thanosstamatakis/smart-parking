@@ -62,6 +62,8 @@ export class HomeComponent implements OnInit {
       var polygonCoordData;
       var polygonToDraw;
 
+      console.log(this.languages$);
+
       // Create map and add to viewport
       const myfrugalmap = L.map('frugalmap',{
         zoomControl: false

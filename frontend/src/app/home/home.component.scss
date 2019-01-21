@@ -7,4 +7,10 @@
 .card{
     border-radius: 0;
     padding:0;
+    margin-left:0;
+}
+
+.scroll {
+    max-height: 84vh;
+    overflow-y: auto;
 }
