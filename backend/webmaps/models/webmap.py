@@ -59,7 +59,7 @@ class Placemark():
         return " ".join((str(MultiPoint(list1).centroid).split(' ')[1:]))
 
     def save_to_db(self):
-        """ Save placemark to database """
+        """ Save placemark to database. """
         redis_key = 'placemark'
         redis_con.sadd(redis_key, self.name)
         LOGGER.debug(f'Add to key {redis_key}, set {self.name}')
@@ -72,13 +72,54 @@ class Placemark():
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
 
+        return redis_key
 
-class Polygon():
+
+class Polygon(Placemark):
     """ Class representing a polygon in map. """
 
-    def __init__(self, name, parking_slots, demand, fixed_demand):
+    def __init__(self, name, population, coordinates, parking_slots, demand, fixed_demand):
         """ Class constructor """
-        self.name = str(name)
+        super().__init__(name, population, coordinates)
         self.parking_slots = parking_slots
         self.demand = demand
         self.fixed_demand = fixed_demand
+
+    def save_to_db(self):
+        """ Save polygon to database. """
+        # Call to save to db from the Placemark's save_to_db funciton
+        redis_key = ":".join((super().save_to_db(), 'polygon'))
+        demands = self._check_for_demand()
+        # Add values to key placemark:<id>:polygon
+        polygon_values = (*demands.keys(), 'slots')
+        redis_con.sadd(redis_key, *set(polygon_values))
+        LOGGER.debug(f'Add to key {redis_key} set values {polygon_values}')
+        # Add parking slots to key placemark:<id>:polygon:slots
+        redis_key = ":".join((redis_key, 'slots'))
+        redis_con.append(redis_key, str(self.parking_slots))
+        LOGGER.debug(
+            f'Add to key {redis_key} string value {self.parking_slots}')
+        # Remove slots from key
+        redis_key = ':'.join(redis_key.split(':')[:-1])
+        # Add demands to keys placemark:<id>:polygon:(fixed_)demand
+        for demand_key, demand_value in demands.items():
+            temp_demand_key = ":".join((redis_key, demand_key))
+            redis_con.lpush(temp_demand_key, *reversed(demand_value))
+            LOGGER.debug(
+                f'Add to key {temp_demand_key} list values {demand_value}')
+
+    def _check_for_demand(self):
+        """
+        Check if demand and fixed demand is not None and return
+        strigns of those not.
+        """
+        demands_dict = dict()
+        if self.demand and self.fixed_demand:
+            demands_dict = {'demand': self.demand,
+                            'fixed_demand': self.fixed_demand}
+        elif self.demand:
+            demands_dict = {'demand': self.demand}
+        elif self.fixed_demand:
+            demands_dict = {'demand': self.fixed_demand}
+
+        return demands_dict
