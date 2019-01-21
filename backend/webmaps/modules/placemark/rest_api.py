@@ -1,6 +1,6 @@
 from flask_restplus import Resource, Namespace, reqparse
 from . import lib
-from webmaps.parse_kml import read_kml
+from webmaps.models.kml_parser import KmlParser
 import flask
 import werkzeug
 
@@ -53,7 +53,8 @@ class Placemark(Resource):
         # Response
         response = "File parsing was unsuccessful."
         if kml_file:
-            read_kml(kml_file)
+            kml_parser = KmlParser(kml_file)
+            kml_parser.parse()
             file_name = werkzeug.utils.secure_filename(kml_file.filename)
             response = f'File {file_name} was successfuly parsed.'
 
