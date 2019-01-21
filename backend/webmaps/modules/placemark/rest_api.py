@@ -37,7 +37,7 @@ class Placemarks(Resource):
         return response
 
 
-@NAMESPACE.route('/')
+@NAMESPACE.route('/file')
 class Placemark(Resource):
     """
     Api class placemark representing one placemark.
