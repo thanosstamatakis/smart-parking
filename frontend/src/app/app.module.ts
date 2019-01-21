@@ -8,6 +8,7 @@ import { ContactComponent } from './contact/contact.component';
 import { HomeComponent } from './home/home.component';
 import { ReportComponent } from './report/report.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { ManageComponent } from './manage/manage.component';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
     NavComponent,
     ContactComponent,
     HomeComponent,
-    ReportComponent
+    ReportComponent,
+    ManageComponent
   ],
   imports: [
     BrowserModule,
