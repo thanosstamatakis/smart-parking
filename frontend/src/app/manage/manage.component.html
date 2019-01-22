@@ -1,4 +1,4 @@
-<div class="card-deck">
+<div class="card-deck d-flex p-3">
   <div class="col-lg-6 d-flex align-items-stretch col-sm-4 text-center mb-4 mx-auto">
     <div class="card" id="card-hover">
       <div class="card-body">
@@ -32,7 +32,7 @@
         <div class="card-body">
           <h2 class="card-title">Delete database data</h2>
           <h6 class="card-subtitle mb-2 text-muted">This will delete all the polygon data from the database.</h6>
-          <button type="button" class="btn btn-danger">Flush Database</button>
+          <button type="button" class="btn btn-danger" (click)="onFlushDB()">Flush Database</button>
         </div>
       </div>
     </div>

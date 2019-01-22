@@ -33,4 +33,12 @@ export class DataService {
       });
   }
 
+  FlushDB(){
+    return this.http.delete('http://localhost:8080/api/placemark/all',
+    {
+      reportProgress: true,
+      observe: 'events'
+    });
+  }
+
 }

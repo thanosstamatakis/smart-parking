@@ -18,6 +18,8 @@ export class ManageComponent implements OnInit {
 
   fileName: string = "";
 
+  keysDeleted: string = "";
+
   onFileSelected(event) {
     this.selectedFile = this.data.FileSelected(event);
     this.fileName = this.selectedFile.name;
@@ -37,12 +39,21 @@ export class ManageComponent implements OnInit {
 
   }
 
+  onFlushDB(){
+    this.data.FlushDB().subscribe(response=>{
+      if (response.type === HttpEventType.Response) {
+        this.keysDeleted = response.body.toString();
+        console.log(this.keysDeleted);
+      }
+    });
+  }
+
   constructor(private data: DataService, config: NgbProgressbarConfig) {
     config.max = 100;
-    config.striped = true;
+    config.striped = false;
     config.animated = true;
     config.type = 'success';
-    config.height = '20px';
+    config.height = '30px';
   }
 
   ngOnInit() {
