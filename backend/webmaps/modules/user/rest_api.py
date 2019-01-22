@@ -1,5 +1,5 @@
 """ Users rest api module. """
-# System Libs
+# Python Libs
 import logging
 from flask_restplus import Resource, Namespace, reqparse
 from flask import request
