@@ -20,9 +20,8 @@ class Placemarks(Resource):
 
     def get(self):
         """ Return all placemark objects """
-        response = []
+        response = dict()
         response = lib.get_placemark_objects()
-
         # Response
         response = flask.jsonify(response)
 
