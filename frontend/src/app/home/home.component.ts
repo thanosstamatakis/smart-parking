@@ -26,6 +26,14 @@ export class HomeComponent implements OnInit {
     return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
   }  
 
+  onPolyClick(){
+      //callFancyboxIframe('flrs.html')
+      var label = "label";
+      var content = "content";
+      var otherStuff = "other stuff";
+      alert("Clicked on polygon with label:" +label +" and content:" +content +". Also otherStuff set to:" +otherStuff);
+  }
+
   sanitizeCoords = function sanitizeCoords(coords, insertToString) {
     var members;
 
@@ -59,10 +67,12 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.data.getLanguages().subscribe(data => {this.languages$ = data;
 
+      console.log(this.languages$);
+
       var polygonCoordData;
       var polygonToDraw;
 
-      console.log(this.languages$);
+      
 
       // Create map and add to viewport
       const myfrugalmap = L.map('frugalmap',{
@@ -83,11 +93,12 @@ export class HomeComponent implements OnInit {
         if (polygonCoordData[0]!=0){
           polygonToDraw = L.polygon(polygonCoordData, {fillColor: 'black', stroke: false, fillOpacity:0.14});
           polygonToDraw.addTo(myfrugalmap);
-          blockNumber = this.sanitizeName(this.languages$[individual].name);
+          // blockNumber = this.sanitizeName(this.languages$[individual].name);
           blockPopulation = this.languages$[individual].population;
-          polygonToDraw.bindPopup("<b><h5>This is block: "+blockNumber+"</h5></b> " + "<br>"
-                                   +"<h7>Block Population: "+blockPopulation+"</h7><br>"
-                                   +'<a href="#" class="btn btn-outline-primary">Go somewhere</a>');
+          // polygonToDraw.bindPopup("<b><h5>This is block: </h5></b> " + "<br>"
+          //                          +"<h7>Block Population: "+blockPopulation+"</h7><br>"
+          //                          +'<a href="#" class="btn btn-outline-primary">Go somewhere</a>');
+          polygonToDraw.on('click', this.onPolyClick);
         }
       }
     });
