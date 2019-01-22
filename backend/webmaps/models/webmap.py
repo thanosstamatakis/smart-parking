@@ -31,7 +31,7 @@ class Placemark():
             polygon = re.search(COORDS_REGEX, str(coordinates)).group(2)
         except AttributeError:
             polygon = 0
-
+        # Returned dict.
         coordinates = {
             'point': point, 'polygon': polygon}
 
@@ -41,17 +41,20 @@ class Placemark():
         """ Extract centroid from coordinates """
         new_list = []
         list1 = []
+        # Get polygon points as a string.
         try:
             polygon_points = self.coordinates['polygon'].strip('()').split(',')
         except AttributeError:
             return '0'
         polygon_points_sanitized = []
+        # Sanitize polygon points and add in.
         for point in polygon_points:
             polygon_points_sanitized.append(point.split(' '))
-        for p in polygon_points_sanitized:
-            for pi in p:
-                if pi:
-                    new_list.append(float(pi))
+        # Add all points to returned list.
+        for points in polygon_points_sanitized:
+            for point in points:
+                if point:
+                    new_list.append(float(point))
             tuple1 = tuple(new_list)
             list1.append(tuple1)
             new_list = []
@@ -60,9 +63,11 @@ class Placemark():
 
     def save_to_db(self):
         """ Save placemark to database. """
+        # Save to placemark key set of placemark ids.
         redis_key = 'placemark'
         redis_con.sadd(redis_key, self.name)
         LOGGER.debug(f'Add to key {redis_key}, set {self.name}')
+        # Save to placemark:<id> the hash of placemark attributes.
         redis_key = ":".join((redis_key, self.name.split('.')[1]))
         hash_to_store = {'point': self.coordinates['point'],
                          'polygon': self.coordinates['polygon'],
@@ -71,7 +76,7 @@ class Placemark():
         redis_con.hmset(
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
-
+        # Return the redis key placemark<id> to be used by children functions.
         return redis_key
 
 
