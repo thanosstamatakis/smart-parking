@@ -72,16 +72,17 @@ class ParkingSlotsCluster():
 
     def _get_clusters_centroid(self, cluster):
         """ Get specific cluster's coordinates. """
-        LOGGER.debug(f'CLUSTER AT CENT: {cluster}')
+        # Use Multipoint to get cluster
         centroid = MultiPoint(cluster[0]).centroid
+        # Sanitize format of centroid
         centroid = str(centroid).translate(
             str.maketrans({'(': '', ')': ''})).split(' ')[1:]
+        # Further formating.
         centroid = self._sanitize_lists_numbers(centroid)
         return centroid
 
     def _get_clusters_distance(self, clusters_center):
         """ Get specific cluster's distance from user point. """
-        LOGGER.debug(f'{clusters_center}, {self.user_location}')
         distance = math.sqrt(
             (clusters_center[0] - float(self.user_location[0]))**2 +
             (clusters_center[1] - float(self.user_location[1]))**2)
