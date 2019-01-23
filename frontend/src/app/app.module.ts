@@ -9,6 +9,8 @@ import { HomeComponent } from './home/home.component';
 import { ReportComponent } from './report/report.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ManageComponent } from './manage/manage.component';
+import { LoginComponent } from './login/login.component';
+import { RegisterComponent } from './register/register.component';
 
 
 @NgModule({
@@ -18,7 +20,9 @@ import { ManageComponent } from './manage/manage.component';
     ContactComponent,
     HomeComponent,
     ReportComponent,
-    ManageComponent
+    ManageComponent,
+    LoginComponent,
+    RegisterComponent
   ],
   imports: [
     BrowserModule,
