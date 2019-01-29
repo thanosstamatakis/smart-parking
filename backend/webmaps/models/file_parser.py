@@ -1,7 +1,8 @@
-""" This module represents a KML Parser model. """
+""" This module contains File Parser models. """
 # Python libs.
 import os
 from fastkml.kml import KML
+from abc import ABC, abstractclassmethod
 # Project files.
 from config import CONFIGURATION
 from webmaps.models.webmap import Polygon
@@ -10,20 +11,44 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
 
 
-class KmlParser():
+class FileParser(ABC):
+    """ Abstruct Class for File Parsing. """
+
+    def __init__(self, file_obj):
+        self.file_obj = file_obj
+
+    @abstractclassmethod
+    def parse(self):
+        """ Method responsible for parsing some kind of file. """
+        pass
+
+    @abstractclassmethod
+    def save_file(self):
+        """ Method responsible for saving the file object. """
+        try:
+            if not os.path.exists(os.path.realpath('webmaps/kml/kml_file.kml')):
+                self.file_obj.save('webmaps/kml/kml_file.kml')
+            self.file_obj = 'webmaps/kml/kml_file.kml'
+        except AttributeError:
+            self.file_obj = 'webmaps/kml/population.kml'
+            LOGGER.debug("File is not correct!")
+
+
+class KmlParser(FileParser):
     """
-    Class responsible for parsing kml file to create Placemark objects,
-    store to db and return the center of the map.
+    Class responsible for parsing kml file to create Placemark objects
+    and store to db.
     """
 
     def __init__(self, kml_file):
         """ Class constructor """
-        self.kml_file = kml_file
+        super().__init__(kml_file)
 
     def parse(self):
+        """ Parse kml file and return the center of all polygons. """
         kml = KML()
-        self._save_file()
-        kml.from_string(open(self.kml_file).read().encode('utf-8'))
+        super().save_file()
+        kml.from_string(open(self.file_obj).read().encode('utf-8'))
         center = [0, 0]
         # Get the base folder object from kml
         folder_object = list(list(kml.features())[0].features())
@@ -53,12 +78,10 @@ class KmlParser():
 
         return center
 
-    def _save_file(self):
-        """ Save kml file if it doesn't aleady exist. """
-        try:
-            if not os.path.exists(os.path.realpath('webmaps/kml/kml_file.kml')):
-                self.kml_file.save('webmaps/kml/kml_file.kml')
-            self.kml_file = 'webmaps/kml/kml_file.kml'
-        except AttributeError:
-            self.kml_file = 'webmaps/kml/population.kml'
-            LOGGER.debug("File is not correct!")
+
+class CsvParser(ABC):
+    """ Class representing csv parser objects. """
+
+    def __init__(self, csv_file):
+        """ Class constructor. """
+        super().__init__(csv_file)
