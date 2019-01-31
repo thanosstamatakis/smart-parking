@@ -1,6 +1,6 @@
 from flask_restplus import Resource, Namespace, reqparse
 from . import lib
-from webmaps.models.kml_parser import KmlParser
+from webmaps.models.file_parser import KmlParser
 import flask
 import werkzeug
 

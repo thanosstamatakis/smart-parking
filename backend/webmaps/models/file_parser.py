@@ -6,6 +6,8 @@ from abc import ABC, abstractclassmethod
 # Project files.
 from config import CONFIGURATION
 from webmaps.models.webmap import Polygon
+# Python libs.
+import werkzeug
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
@@ -15,6 +17,7 @@ class FileParser(ABC):
     """ Abstruct Class for File Parsing. """
 
     def __init__(self, file_obj):
+        """ Class constructor """
         self.file_obj = file_obj
 
     @abstractclassmethod
@@ -22,16 +25,22 @@ class FileParser(ABC):
         """ Method responsible for parsing some kind of file. """
         pass
 
-    @abstractclassmethod
     def save_file(self):
         """ Method responsible for saving the file object. """
+        file_name = werkzeug.utils.secure_filename(self.file_obj.filename)
         try:
-            if not os.path.exists(os.path.realpath('webmaps/kml/kml_file.kml')):
-                self.file_obj.save('webmaps/kml/kml_file.kml')
-            self.file_obj = 'webmaps/kml/kml_file.kml'
+            file_type = file_name.split('.')[1]
+        except (IndexError, AttributeError):
+            LOGGER.debug(f'{file_name} has no .')
+            exit()
+        file_path = f'webmaps/{file_type}/{file_name}'
+        try:
+            if not os.path.exists(os.path.realpath(file_path)):
+                self.file_obj.save(file_path)
+            self.file_obj = file_path
         except AttributeError:
-            self.file_obj = 'webmaps/kml/population.kml'
-            LOGGER.debug("File is not correct!")
+            self.file_obj = f'webmaps/{file_type}/{file_type}_file.{file_type}'
+            LOGGER.debug(f"File is not correct! Trying with {self.file_obj}")
 
 
 class KmlParser(FileParser):
@@ -77,6 +86,10 @@ class KmlParser(FileParser):
             center[index] /= len(placemarks)
 
         return center
+
+    def save_file(self):
+        """ Method responsible for saving the kml file. """
+        super().save_file()
 
 
 class CsvParser(ABC):
