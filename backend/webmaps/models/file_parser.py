@@ -33,13 +33,14 @@ class FileParser(ABC):
         except (IndexError, AttributeError):
             LOGGER.debug(f'{file_name} has no .')
             exit()
-        file_path = f'webmaps/{file_type}/{file_name}'
+        file_path = f'webmaps/files/{file_name}'
         try:
             if not os.path.exists(os.path.realpath(file_path)):
                 self.file_obj.save(file_path)
+                LOGGER.debug(f'New file {file_name} saved at {file_path}')
             self.file_obj = file_path
         except AttributeError:
-            self.file_obj = f'webmaps/{file_type}/{file_type}_file.{file_type}'
+            self.file_obj = f'webmaps/files/{file_type}_file.{file_type}'
             LOGGER.debug(f"File is not correct! Trying with {self.file_obj}")
 
 
@@ -50,7 +51,7 @@ class KmlParser(FileParser):
     """
 
     def __init__(self, kml_file):
-        """ Class constructor """
+        """ Class constructor. """
         super().__init__(kml_file)
 
     def parse(self):
@@ -92,9 +93,16 @@ class KmlParser(FileParser):
         super().save_file()
 
 
-class CsvParser(ABC):
+class CsvParser(FileParser):
     """ Class representing csv parser objects. """
 
     def __init__(self, csv_file):
         """ Class constructor. """
         super().__init__(csv_file)
+
+    def parse(self):
+        """ Parse csv file to get demands. """
+
+    def save_file(self):
+        """ Method responsible for saving the kml file. """
+        super().save_file()
