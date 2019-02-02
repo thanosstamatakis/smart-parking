@@ -11,6 +11,7 @@ import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ManageComponent } from './manage/manage.component';
 import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
+import { ModalContentComponent } from './modal-content/modal-content.component';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { RegisterComponent } from './register/register.component';
     ReportComponent,
     ManageComponent,
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    ModalContentComponent
   ],
   imports: [
     BrowserModule,
