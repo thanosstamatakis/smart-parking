@@ -1,16 +1,5 @@
-#frugalmap  { 
-    height : 84vh; 
-    // width : 100%; 
-    padding: 0;
+#cityMap  {
+    position: absolute;
+    height : 100%; 
+    width : 100%; 
 } 
-
-.card{
-    border-radius: 0;
-    padding:0;
-    margin-left:0;
-}
-
-.scroll {
-    max-height: 84vh;
-    overflow-y: auto;
-}
