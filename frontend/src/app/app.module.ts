@@ -26,6 +26,9 @@ import { ModalContentComponent } from './modal-content/modal-content.component';
     RegisterComponent,
     ModalContentComponent
   ],
+  entryComponents: [
+    ModalContentComponent
+  ],
   imports: [
     BrowserModule,
     AppRoutingModule,

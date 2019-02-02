@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { DataService } from '../data.service';
-import { Observable } from 'rxjs';
-import { async } from 'q';
+import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalContentComponent } from '../modal-content/modal-content.component';
 
 @Component({
   selector: 'app-home',
@@ -13,9 +13,12 @@ export class HomeComponent implements OnInit {
 
 
   //Object to hold data from DataService
-  languages$: Object;
+  apiData: Object;
+  visibleModal: Boolean = false;
+  modalReference: Object = this.modalService;
 
-  
+  constructor(private data: DataService, private modalService: NgbModal) { }
+
   insertToString = function insertToString(main_string, ins_string, pos) {
     if(typeof(pos) == "undefined") {
       pos = 0;
@@ -26,13 +29,6 @@ export class HomeComponent implements OnInit {
     return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
   }  
 
-  onPolyClick(){
-      //callFancyboxIframe('flrs.html')
-      var label = "label";
-      var content = "content";
-      var otherStuff = "other stuff";
-      alert("Clicked on polygon with label:" +label +" and content:" +content +". Also otherStuff set to:" +otherStuff);
-  }
 
   sanitizeCoords = function sanitizeCoords(coords, insertToString) {
     var members;
@@ -62,44 +58,58 @@ export class HomeComponent implements OnInit {
     name = name.replace('population_data_per_block.','');
     return name;
   }
-  constructor(private data: DataService) { }
+ 
 
   ngOnInit() {
-    this.data.getLanguages().subscribe(data => {this.languages$ = data;
-
-      console.log(this.languages$);
-
-      var polygonCoordData;
-      var polygonToDraw;
-
-      
-
-      // Create map and add to viewport
-      const myfrugalmap = L.map('frugalmap',{
-        zoomControl: false
-      }).setView([40.62023756670292, 22.95810400084713], 17);
-
-      // Add tile layer to map
-      L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
-        attribution: null,
-      }).addTo(myfrugalmap);
 
 
-      for (var individual in this.languages$) {
-        var blockNumber;
-        var blockPopulation;
-        this.languages$[individual].polygon = this.sanitizeCoords(this.languages$[individual].polygon, this.insertToString);
-        polygonCoordData = JSON.parse(this.languages$[individual].polygon);
-        if (polygonCoordData[0]!=0){
-          polygonToDraw = L.polygon(polygonCoordData, {fillColor: 'black', stroke: false, fillOpacity:0.14});
-          polygonToDraw.addTo(myfrugalmap);
-          // blockNumber = this.sanitizeName(this.languages$[individual].name);
-          blockPopulation = this.languages$[individual].population;
-          // polygonToDraw.bindPopup("<b><h5>This is block: </h5></b> " + "<br>"
-          //                          +"<h7>Block Population: "+blockPopulation+"</h7><br>"
-          //                          +'<a href="#" class="btn btn-outline-primary">Go somewhere</a>');
-          polygonToDraw.on('click', this.onPolyClick);
+    // Create map and add to viewport
+    const cityMap = L.map('cityMap',{
+      zoomControl: false
+    }).setView([40.62023756670292, 22.95810400084713], 17);
+
+    // Add tile layer to map
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
+      attribution: null,
+    }).addTo(cityMap);
+
+    // Get the bootstrap modalService 
+    var theModalRef = this.modalService;
+    
+    this.data.getLanguages().subscribe(data => {this.apiData = data;
+
+      var blockCoords;
+      var blockToDraw;
+
+      for (var individual in this.apiData) {
+        //declarations inside the loop
+        let blockData = (this.apiData[individual]);
+       
+       
+        //Get polygon data that was received through the service, sanitize the data so it is readable from leaflet functions
+        this.apiData[individual].polygon = this.sanitizeCoords(this.apiData[individual].polygon, this.insertToString);
+        blockCoords = JSON.parse(this.apiData[individual].polygon);
+
+        //Check if a block has polygon data and draw it
+        if (blockCoords[0]!=0){
+          blockToDraw = L.polygon(blockCoords, {fillColor: 'black', stroke: false, fillOpacity:0.18});
+          blockToDraw['blockData'] = blockData;
+          blockToDraw.addTo(cityMap);
+
+          
+          //Define action for click on an individual polygon
+          blockToDraw.on('click', function(event){
+
+            let blockData = event.target.blockData;
+            var theModalData = theModalRef.open(ModalContentComponent,{
+              size: 'lg'
+            });
+
+            theModalData.componentInstance.blockData = blockData;
+          });
         }
+
+
       }
     });
   }
