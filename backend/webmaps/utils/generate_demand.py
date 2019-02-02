@@ -5,6 +5,6 @@ def generate_demand():
     """ Retrun a list of demands per hour """
     rand_demands = list()
     for i in range(23):
-        rand_demands.append(round(rand.random()))
+        rand_demands.append(round(rand.random(), 2))
     
     return rand_demands
