@@ -1,16 +1,21 @@
 """ This module contains File Parser models. """
 # Python libs.
 import os
+import csv
+import werkzeug
 from fastkml.kml import KML
 from abc import ABC, abstractclassmethod
 # Project files.
 from config import CONFIGURATION
 from webmaps.models.webmap import Polygon
-# Python libs.
-import werkzeug
+from webmaps.utils import generate_demand
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
+# To Be used if csv parsing is enabled.
+# CSV_HEADERS = {'Time': ['Time', 'wra', 'Wra'], 'Center': ['Kentro', 'KENTRO', 'Center'],
+#                'Residence': ['Katoikia', 'Residence'],
+#                'Constant Demand': ['Statheri Zitisi', 'Constant Demand']}
 
 
 class FileParser(ABC):
@@ -81,7 +86,8 @@ class KmlParser(FileParser):
                 center[1] += 0
                 center[0] += 0
             mark = Polygon(placemark.name, population,
-                           placemark.geometry, 20, [1, 2, 3], [1, 1, 1])
+                           placemark.geometry, 20, generate_demand.generate_demand(),
+                           generate_demand.generate_demand())
             mark.save_to_db()
         for index, _ in enumerate(center):
             center[index] /= len(placemarks)
