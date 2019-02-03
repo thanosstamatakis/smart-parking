@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpEventType, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 // import { Subject } from 'rxjs/Subject';
 // import 'rxjs/add/operator/map';
@@ -39,6 +39,16 @@ export class DataService {
       reportProgress: true,
       observe: 'events'
     });
+  }
+
+  addUser(body) {
+    console.log(body.type);
+    let params = new HttpParams()
+      .set('type',body.type)
+      .set('username',body.username)
+      .set('password',body.password)
+
+    return this.http.post('http://localhost:8080/api/user/adduser',null,{params: params});
   }
 
 }

@@ -1,0 +1,33 @@
+<div class="card col-lg-6 mx-auto" id="registerCard">
+
+    <div class="card-body">
+    <h1 class="card-title mx-auto text-center">Register</h1>
+    <hr>
+    <form [formGroup]="rForm" (ngSubmit)="addUser(rForm.value)">
+        <!-- Username Field -->
+        <div class="form-group text-center">
+            <label for="usernameBootField">Username</label>
+            <input type="text" class="form-control col-lg-5 mx-auto" id="usernameBootField" placeholder="Enter a valid username here" formControlName="username">
+            <div id="warning" class="alert-warning bg-warning text-white col-lg-5 mx-auto" *ngIf="!rForm.controls['username'].valid  && rForm.controls['username'].touched">The username is required to register.</div>
+        </div>
+        <!-- Password Field -->
+        <div class="form-group text-center">
+            <label for="passwordBootField">Password</label>
+            <input type="password" class="form-control col-lg-5 mx-auto" id="passwordBootField" placeholder="Enter a valid password here" formControlName="password">
+            <div id="warning" class="alert-warning bg-warning text-white col-lg-5 mx-auto" *ngIf="!rForm.controls['password'].valid  && rForm.controls['password'].touched">The password needs at least, one capital letter, one lowercase letter one number and one symbol.</div>
+        </div>
+        <!-- Confirm Password Field -->
+        <div class="form-group text-center">
+            <label for="confirmBootField">Confirm Password</label>
+            <input type="password" class="form-control col-lg-5 mx-auto" id="confirmBootField" placeholder="Confirm the password you entered above" formControlName="confirm_password">
+            <div id="danger" class="alert bg-danger text-white col-lg-5 mx-auto" *ngIf="rForm.controls.confirm_password.errors?.MatchPassword">The passwords are not the same.</div>
+        </div>
+        <!-- Submit Button -->
+        <div class="form-group text-center">
+            <button type="submit" class="btn btn-primary" [disabled]="!rForm.valid">Submit</button>
+        </div>
+
+    </form>
+    </div>
+</div>
+
