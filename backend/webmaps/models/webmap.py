@@ -18,7 +18,7 @@ class Placemark():
 
     def __init__(self, name, population, coordinates):
         """ Class constructor """
-        self.name = str(name)
+        self.name = str(name).split('.')[1]
         self.coordinates = self._get_coordinates(coordinates)
         self.population = str(population)
 
@@ -69,7 +69,7 @@ class Placemark():
         redis_con.sadd(redis_key, self.name)
         LOGGER.debug(f'Add to key {redis_key}, set {self.name}')
         # Save to placemark:<id> the hash of placemark attributes.
-        redis_key = ":".join((redis_key, self.name.split('.')[1]))
+        redis_key = ":".join((redis_key, self.name)
         hash_to_store = {'point': self.coordinates['point'],
                          'polygon': self.coordinates['polygon'],
                          'population': self.population,
