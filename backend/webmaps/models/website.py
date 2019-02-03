@@ -32,7 +32,7 @@ class User():
                 user_valid['user_name'] = True
             usr_pass = redis_con.hget(
                 ":".join(('users', str(user_number))), 'password')
-            if BCRYPT.check_password_hash(usr_pass, self.password):
+            if usr_pass and BCRYPT.check_password_hash(usr_pass, self.password):
                 user_valid['password'] = True
         if list(user_valid.values()) == [True, True]:
             return 'User exists in DB'
@@ -54,7 +54,7 @@ class User():
         users = redis_con.smembers(redis_key)
         users = list(users)
         if users:
-            users_number = 1 + int(users[-1])
+            users_number = 1 + len(users)
         else:
             users_number = 1
 
