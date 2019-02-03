@@ -86,8 +86,7 @@ class KmlParser(FileParser):
                 center[1] += 0
                 center[0] += 0
             mark = Polygon(placemark.name, population,
-                           placemark.geometry, 20, generate_demand.generate_demand(),
-                           generate_demand.generate_demand())
+                           placemark.geometry, 20, generate_demand.generate_demand())
             mark.save_to_db()
         for index, _ in enumerate(center):
             center[index] /= len(placemarks)

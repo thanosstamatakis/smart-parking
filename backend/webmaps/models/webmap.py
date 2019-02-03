@@ -3,6 +3,7 @@
 import logging
 import redis
 import re
+import random as rand
 from shapely.geometry import MultiPoint
 # Project files.
 from config import CONFIGURATION
@@ -83,12 +84,12 @@ class Placemark():
 class Polygon(Placemark):
     """ Class representing a polygon in map. """
 
-    def __init__(self, name, population, coordinates, parking_slots, demand, fixed_demand):
+    def __init__(self, name, population, coordinates, parking_slots, demand):
         """ Class constructor """
         super().__init__(name, population, coordinates)
         self.parking_slots = parking_slots
         self.demand = demand
-        self.fixed_demand = fixed_demand
+        self.fixed_demand = self._get_fixed_demand()
 
     def save_to_db(self):
         """ Save polygon to database. """
@@ -128,3 +129,15 @@ class Polygon(Placemark):
             demands_dict = {'demand': self.fixed_demand}
 
         return demands_dict
+
+    def _get_fixed_demand(self):
+        """ Return fixed demand for the specific block. """
+        fixed_demand_factor = (int(self.population)/1000)
+        fixed_demand = list()
+        for index in range(24):
+            fixed_demand.append(round(
+                1 * fixed_demand_factor + fixed_demand_factor * rand.random(), 2))
+            if 0 < fixed_demand[index] <= 0.10:
+                fixed_demand[index] *= 10
+
+        return fixed_demand
