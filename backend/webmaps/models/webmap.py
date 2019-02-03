@@ -84,10 +84,10 @@ class Placemark():
 class Polygon(Placemark):
     """ Class representing a polygon in map. """
 
-    def __init__(self, name, population, coordinates, parking_slots, demand):
+    def __init__(self, name, population, coordinates, demand):
         """ Class constructor """
         super().__init__(name, population, coordinates)
-        self.parking_slots = parking_slots
+        self.parking_slots = rand.randint(10, 50)
         self.demand = demand
         self.fixed_demand = self._get_fixed_demand()
 
@@ -132,7 +132,7 @@ class Polygon(Placemark):
 
     def _get_fixed_demand(self):
         """ Return fixed demand for the specific block. """
-        fixed_demand_factor = (int(self.population)/1000)
+        fixed_demand_factor = int(self.population)/1000
         fixed_demand = list()
         for index in range(24):
             fixed_demand.append(round(
