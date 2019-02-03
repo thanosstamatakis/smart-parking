@@ -55,3 +55,21 @@ def delete_placemarks():
     response = redis_pipe.execute()
 
     return response
+
+def update_demand(placemark_id, demand_per_hour):
+    """ Update a placemark's demand in database. """
+    redis_key = ":".join(('placemark', str(placemark_id), 'polygon', 'demand'))
+    redis_pipe = redis_conn.pipeline()
+    response = 'An error occured!'
+    try:
+        for time, demand in demand_per_hour.items():
+            redis_pipe.lset(redis_key, int(time), demand)
+            LOGGER.debug(f'Set to key: {redis_key} at list position: {time} value: {demand}')
+    except ValueError:
+        pass
+    try:
+        response = redis_pipe.execute()
+    except redis.exceptions.ResponseError:
+        pass
+    
+    return response

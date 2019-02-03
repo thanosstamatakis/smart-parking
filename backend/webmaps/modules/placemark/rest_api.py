@@ -1,15 +1,25 @@
-from flask_restplus import Resource, Namespace, reqparse
-from . import lib
-from webmaps.models.file_parser import KmlParser
+""" Rest Api module for Placemarks. """
+# Python libs.
 import flask
 import werkzeug
+import logging
+from flask_restplus import Resource, Namespace, reqparse
+# Project files.
+from . import lib
+from config import CONFIGURATION
+from webmaps.models.file_parser import KmlParser
+
 
 NAMESPACE = Namespace(
     'placemark', description='Api namespace representing a placemark.')
-
+LOGGER = CONFIGURATION.get_logger(__name__)
+# Models
 kml_model = NAMESPACE.parser()
 kml_model.add_argument('kml-file', type=werkzeug.datastructures.FileStorage,
                        help='Kml file to be parsed', location='files', required=True)
+demand_model = NAMESPACE.parser()
+demand_model.add_argument('demand', help='The updated demand.', type=dict, location='json',
+                          required=True)
 
 
 @NAMESPACE.route('/all')
@@ -56,5 +66,26 @@ class Placemark(Resource):
             kml_parser.parse()
             file_name = werkzeug.utils.secure_filename(kml_file.filename)
             response = f'File {file_name} was successfuly parsed.'
+
+        return response
+
+
+@NAMESPACE.route('/demand/<int:placemark_id>')
+class PlacemarkDemand(Resource):
+    """
+    Api class placemark representing placemark's demand.
+    """
+    @NAMESPACE.expect(demand_model)
+    def patch(self, placemark_id):
+        """ Patch method to update a placemark's demand. """
+        # Parse arguments.
+        args = demand_model.parse_args()
+        demand = args['demand']
+        # Call lib function to update demand.
+        response = lib.update_demand(placemark_id, demand)
+        if response == [True]:
+            response = f'Demand of Placemark:{placemark_id} is updated!'
+        else:
+            response = 'An error occured. Demand is not updated!'
 
         return response
