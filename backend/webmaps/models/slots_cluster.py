@@ -6,6 +6,7 @@ from sklearn.cluster import DBSCAN
 from shapely.geometry import MultiPoint
 # Project files.
 from config import CONFIGURATION
+from webmaps.utils.general_sanitizations import point_sanitization
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 
@@ -75,8 +76,7 @@ class ParkingSlotsCluster():
         # Use Multipoint to get cluster
         centroid = MultiPoint(cluster[0]).centroid
         # Sanitize format of centroid
-        centroid = str(centroid).translate(
-            str.maketrans({'(': '', ')': ''})).split(' ')[1:]
+        centroid = point_sanitization(centroid)
         # Further formating.
         centroid = self._sanitize_lists_numbers(centroid)
         return centroid
