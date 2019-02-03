@@ -13,7 +13,7 @@ NAMESPACE = Namespace(
 LOGGER = CONFIGURATION.get_logger(__name__)
 user_model = NAMESPACE.parser()
 user_model.add_argument('type', type=str, default='normal',
-                        help='Type of user.')
+                        help='Type of user.', choices=['normal', 'admin'])
 user_model.add_argument('username', type=str, help='Username of user.')
 user_model.add_argument('password', type=str, help='Password of user.')
 
