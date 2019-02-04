@@ -1,6 +1,8 @@
 """ This module contains helper function for placemark api """
+# Python libs.
 import redis
 import logging
+# Project files.
 from config import CONFIGURATION
 
 redis_conn = redis.Redis(host=CONFIGURATION.db_conn, decode_responses=True)
@@ -15,7 +17,7 @@ def get_placemark_objects():
     redis_key = 'placemark'
     placemark_objects = redis_conn.smembers(redis_key)
     for obj in placemark_objects:
-        placemark_num = obj.split('.')[1]
+        placemark_num = obj
         temp_key = ":".join((redis_key, placemark_num))
         placemark_attr = redis_conn.hgetall(temp_key)
         polygon_attrs = get_polygon_attributes(temp_key)
