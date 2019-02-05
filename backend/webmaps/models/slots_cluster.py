@@ -83,6 +83,7 @@ class ParkingSlotsCluster():
         # Further formating.
         LOGGER.debug(f"CENTROID PASSED: {centroid}")
         centroid = self._sanitize_lists_numbers(centroid)
+
         return centroid
 
     def _get_clusters_distance(self, clusters_center):

@@ -7,6 +7,7 @@ from flask import request
 from . import lib
 from config import CONFIGURATION
 from webmaps.models.website import User as User_Class
+from constans import (VALIDATION_NAMESPACE, REGISTRATION_NAMESPACE)
 
 NAMESPACE = Namespace(
     'user', description='Api namespace representing an app user.')
@@ -32,11 +33,11 @@ class Validation(Resource):
             user_name = str(args['username'])
             user_pass = str(args['password'])
         except AttributeError:
-            return 'Check users credentials.'
+            return VALIDATION_NAMESPACE.VALIDATION_ERROR
         user = User_Class(user_type, user_name, user_pass)
+        # Response
         response = user.check_if_user_exists()
 
-        # Response
         return response
 
 
@@ -54,13 +55,14 @@ class AddUser(Resource):
             user_name = str(args['username'])
             user_pass = str(args['password'])
         except AttributeError:
-            return 'User was unsuccessfuly stored. Check users credentials again.'
+            return REGISTRATION_NAMESPACE.REGISTRATION_ERROR
         new_user = User_Class(user_type, user_name, user_pass)
-        response = new_user.check_if_user_exists()
-        if response == 'User does not exist':
-            new_user.save_to_db()
-            response = f'User {new_user.username} is saved to db.'
-        else:
-            response = 'Username exists, try a different one.'
         # Response
+        response = new_user.check_if_user_exists()
+        if response == VALIDATION_NAMESPACE.UNKNOWN_USER:
+            new_user.save_to_db()
+            response = REGISTRATION_NAMESPACE.get_correct_registration_message(new_user.username)
+        else:
+            response = REGISTRATION_NAMESPACE.USERNAME_EXISTS
+
         return response

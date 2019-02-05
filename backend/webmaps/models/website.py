@@ -5,6 +5,7 @@ import redis
 # Project files.
 from webmaps import BCRYPT
 from config import CONFIGURATION
+from constans import VALIDATION_NAMESPACE
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 redis_con = redis.Redis(host=CONFIGURATION.db_conn, decode_responses=True)
@@ -24,7 +25,7 @@ class User():
         user_valid = {'user_name': False, 'password': False}
         user_numbers = redis_con.smembers('users')
         if not user_numbers:
-            return "User does not exist"
+            return VALIDATION_NAMESPACE.UNKNOWN_USER
         for user_number in user_numbers:
             temp_username = str(redis_con.hget(
                 ":".join(('users', str(user_number))), 'username'))
@@ -35,11 +36,11 @@ class User():
             if usr_pass and BCRYPT.check_password_hash(usr_pass, self.password):
                 user_valid['password'] = True
         if list(user_valid.values()) == [True, True]:
-            return 'User exists in DB'
+            return VALIDATION_NAMESPACE.USER_EXISTS
         elif list(user_valid.values()) == [True, False]:
-            return 'Wrong Password'
+            return VALIDATION_NAMESPACE.WRONG_PASSWORD
         else:
-            return 'User does not exist'
+            return VALIDATION_NAMESPACE.UNKNOWN_USER
 
     def _encrypt_password(self, password):
         """ Returns user encrypted password"""

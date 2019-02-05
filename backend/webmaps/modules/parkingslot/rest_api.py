@@ -9,6 +9,7 @@ from flask_restplus import Resource, Namespace
 from . import lib
 from config import CONFIGURATION
 from webmaps.models.slots_cluster import ParkingSlotsCluster
+from constans import VALIDATION_NAMESPACE
 
 NAMESPACE = Namespace(
     'parking-slot', description='Api namespace representing a parking slot.')
@@ -37,14 +38,9 @@ class ParkingSlot(Resource):
             user_location = [args['latitude'], args['longitude']]
         except KeyError as e:
             LOGGER.debug(e)
-            return "Check user location's parameters."
-        # parking_slots = lib.get_parking_slots
-        # X = np.array([[1, 2], [2, 2], [2, 3],
-                    #   [8, 7], [8, 8], [25, 80]])
-        # parking_slot_cluster = ParkingSlotsCluster(X, user_location)
-        # clusters = parking_slot_cluster.get_clusters()
-        response = lib.get_clusters(user_location, args['radius'])
+            return VALIDATION_NAMESPACE.USER_LOCATION_INPUT_ERROR
         # Response
+        response = lib.get_clusters(user_location, args['radius'])
         response = flask.jsonify(response)
 
         return response

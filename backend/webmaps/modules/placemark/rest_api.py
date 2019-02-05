@@ -8,7 +8,7 @@ from flask_restplus import Resource, Namespace, reqparse
 from . import lib
 from config import CONFIGURATION
 from webmaps.models.file_parser import KmlParser
-
+from constans import PLACEMARK_NAMESPACE
 
 NAMESPACE = Namespace(
     'placemark', description='Api namespace representing a placemark.')
@@ -41,7 +41,7 @@ class Placemarks(Resource):
         """ Delete all placemark objects. """
         response = lib.delete_placemarks()
         # Response
-        response = f'{len(response)} keys deleted from database.'
+        response = PLACEMARK_NAMESPACE.get_database_deletion_message(len(response))
 
         return response
 
@@ -60,12 +60,12 @@ class Placemark(Resource):
         kml_file = kml_model.parse_args()['kml-file']
 
         # Response
-        response = "File parsing was unsuccessful."
+        response = PLACEMARK_NAMESPACE.FILE_ERROR
         if kml_file:
             kml_parser = KmlParser(kml_file)
             kml_parser.parse()
             file_name = werkzeug.utils.secure_filename(kml_file.filename)
-            response = f'File {file_name} was successfuly parsed.'
+            response = PLACEMARK_NAMESPACE.get_correct_file_parsing_message(file_name)
 
         return response
 
@@ -84,8 +84,8 @@ class PlacemarkDemand(Resource):
         # Call lib function to update demand.
         response = lib.update_demand(placemark_id, demand)
         if response == [True]:
-            response = f'Demand of Placemark:{placemark_id} is updated!'
+            response = PLACEMARK_NAMESPACE.get_correct_demand_update_message(placemark_id)
         else:
-            response = 'An error occured. Demand is not updated!'
+            response = PLACEMARK_NAMESPACE.DEMAND_ERROR
 
         return response
