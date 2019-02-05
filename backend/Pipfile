@@ -21,6 +21,7 @@ flask-restplus = "*"
 shapely = "*"
 flask-cors = "*"
 sklearn = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.6"

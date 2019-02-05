@@ -26,7 +26,7 @@ class ParkingSlotsCluster():
         return clustering.
         """
         # Get DBSCAN model.
-        model = DBSCAN(eps=3, min_samples=2)
+        model = DBSCAN(eps=0.0001, min_samples=2)
         # Get clustering from DB scan model.
         clustering = model.fit(self.parking_slots)
 
@@ -48,10 +48,12 @@ class ParkingSlotsCluster():
         clusters = self._find_max_point_cluster(clusters)
 
         for cluster in clusters:
-            cluster_cent = self._get_clusters_centroid(cluster)
-            cluster_dist = self._get_clusters_distance(cluster_cent)
-            correct_clusters.append(
-                {'centroid': cluster_cent, 'distance': cluster_dist})
+            LOGGER.debug(f"CLUSTERS: {clusters} CLUSTER: {type(cluster)}")
+            if len(cluster) > 0:
+                cluster_cent = self._get_clusters_centroid(cluster)
+                cluster_dist = self._get_clusters_distance(cluster_cent)
+                correct_clusters.append(
+                    {'centroid': cluster_cent, 'distance': cluster_dist})
 
         return correct_clusters
 
@@ -75,9 +77,11 @@ class ParkingSlotsCluster():
         """ Get specific cluster's coordinates. """
         # Use Multipoint to get cluster
         centroid = MultiPoint(cluster[0]).centroid
+        LOGGER.debug(f"CENTROID PASSED: {centroid}")
         # Sanitize format of centroid
         centroid = point_sanitization(centroid)
         # Further formating.
+        LOGGER.debug(f"CENTROID PASSED: {centroid}")
         centroid = self._sanitize_lists_numbers(centroid)
         return centroid
 
@@ -91,8 +95,9 @@ class ParkingSlotsCluster():
 
     @staticmethod
     def _sanitize_lists_numbers(list_to_sanitize):
-        """ Limit lists floats to 2 decimals and return """
+        """ Limit lists floats to 2 decimals and return. """
         for index, number in enumerate(list_to_sanitize):
+            LOGGER.debug(f"LIST TO SANITIZE: {list_to_sanitize}")
             list_to_sanitize[index] = float("%.2f" % round(float(number), 2))
 
         return list_to_sanitize

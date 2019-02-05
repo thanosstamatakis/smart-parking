@@ -19,6 +19,9 @@ user_location_model.add_argument(
     'longitude', type=float, help='Longitude of parking slot.')
 user_location_model.add_argument(
     'latitude', type=float, help='Latitude of parking slot.')
+user_location_model.add_argument(
+    'radius', type=float, help= 'Radius of circle to look for parking.'
+)
 
 
 @NAMESPACE.route('/')
@@ -35,11 +38,12 @@ class ParkingSlot(Resource):
         except KeyError as e:
             LOGGER.debug(e)
             return "Check user location's parameters."
-        X = np.array([[1, 2], [2, 2], [2, 3],
-                      [8, 7], [8, 8], [25, 80]])
-        parking_slot_cluster = ParkingSlotsCluster(X, user_location)
-        clusters = parking_slot_cluster.get_clusters()
-        response = clusters
+        # parking_slots = lib.get_parking_slots
+        # X = np.array([[1, 2], [2, 2], [2, 3],
+                    #   [8, 7], [8, 8], [25, 80]])
+        # parking_slot_cluster = ParkingSlotsCluster(X, user_location)
+        # clusters = parking_slot_cluster.get_clusters()
+        response = lib.get_clusters(user_location, args['radius'])
         # Response
         response = flask.jsonify(response)
 
