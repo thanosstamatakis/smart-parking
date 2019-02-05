@@ -1,0 +1,51 @@
+
+  #registerCard:hover {
+    box-shadow: 0 0 22px rgba(33,33,33,.2); 
+  }
+
+ #registerCard {
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+    margin-top: 8em;
+    border: none;
+    transition: box-shadow .3s;
+  }
+
+  .form-group {
+      margin-bottom: 2em;
+  }
+
+  #warning {
+      border: none;
+      margin-top: 1em;
+      border-radius: 1.5em;
+      padding: .5em;
+  }
+
+  #danger {
+    border: none;
+    margin-top: 1em;
+    border-radius: 1.5em;
+    padding: .5em;
+}
+
+  input {
+      border-radius:1.5em;
+      border:none;
+      box-shadow: 0 0 4px rgba(33,33,33,.2);
+  }
+
+  ::-webkit-input-placeholder {
+    text-align: center;
+ }
+
+ :-moz-placeholder { /* Firefox 18- */
+    text-align: center;  
+ }
+ 
+ ::-moz-placeholder {  /* Firefox 19+ */
+    text-align: center;  
+ }
+ 
+ :-ms-input-placeholder {  
+    text-align: center; 
+ }

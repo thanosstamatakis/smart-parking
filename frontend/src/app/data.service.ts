@@ -51,4 +51,14 @@ export class DataService {
     return this.http.post('http://localhost:8080/api/user/adduser',null,{params: params});
   }
 
+  loginUser(body) {
+    let params = new HttpParams()
+    .set('type',body.type)
+    .set('username',body.username)
+    .set('password',body.password)
+
+    return this.http.get('http://localhost:8080/api/user/validation',{params: params});
+  }
+
+
 }

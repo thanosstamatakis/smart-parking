@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
 import { PasswordValidation } from './password-validation';
 import { DataService } from '../data.service';
+import { JwtHelperService } from '@auth0/angular-jwt';
 
 @Component({
   selector: 'app-register',
@@ -56,8 +57,14 @@ export class RegisterComponent {
       password: post.password
     }
 
-    this._data.addUser(body).subscribe(data => {
-      console.log(data);
+    this._data.addUser(body).subscribe(res => {
+      console.log(res);
+      console.log(res['Token'])
+      var token = JSON.stringify(res['Token']);
+      const helper = new JwtHelperService();
+      let decodedToken = helper.decodeToken(token);
+      console.log(decodedToken);
+      
     });
 
   }
