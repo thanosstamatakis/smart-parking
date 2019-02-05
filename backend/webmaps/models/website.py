@@ -29,7 +29,9 @@ class User():
         for user_number in user_numbers:
             temp_username = str(redis_con.hget(
                 ":".join(('users', str(user_number))), 'username'))
-            if temp_username == self.username:
+            requested_user_type = str(redis_con.hget(
+                ":".join(('users', str(user_number))), 'usertype'))
+            if temp_username == self.username and requested_user_type == self.user_type:
                 user_valid['user_name'] = True
             usr_pass = redis_con.hget(
                 ":".join(('users', str(user_number))), 'password')
