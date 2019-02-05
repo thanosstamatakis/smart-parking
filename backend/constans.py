@@ -1,4 +1,4 @@
-""" Module containing constants used in project """
+""" Module containing constants used in project. """
 
 class ValidationNamespace():
     """ User validation constants class. """
@@ -26,7 +26,7 @@ class PlacemarkNamespace():
     def __init__(self):
         """ Class constructor. """
         self.DEMAND_ERROR = 'An error occured. Demand is not updated!'
-        self.FILE_ERROR = "File parsing was unsuccessful."
+        self.FILE_ERROR = 'File parsing was unsuccessful.'
 
     def get_correct_file_parsing_message(self, filename):
         """ Return string for correct file parsing. """

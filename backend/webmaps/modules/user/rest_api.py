@@ -2,11 +2,13 @@
 # Python Libs
 import logging
 from flask_restplus import Resource, Namespace, reqparse
-from flask import request
+from flask import (request, jsonify)
+import jwt
 # Project Files
 from . import lib
 from config import CONFIGURATION
 from webmaps.models.website import User as User_Class
+from webmaps import APP
 from constans import (VALIDATION_NAMESPACE, REGISTRATION_NAMESPACE)
 
 NAMESPACE = Namespace(
@@ -28,6 +30,8 @@ class Validation(Resource):
     def get(self):
         """ Get function for checking user credentials. """
         args = request.args
+        response = dict.fromkeys(['Message', 'Token'])
+        LOGGER.debug(response)
         try:
             user_type = str(args['type'])
             user_name = str(args['username'])
@@ -36,8 +40,12 @@ class Validation(Resource):
             return VALIDATION_NAMESPACE.VALIDATION_ERROR
         user = User_Class(user_type, user_name, user_pass)
         # Response
-        response = user.check_if_user_exists()
-
+        response['Message'] = user.check_if_user_exists()
+        if response['Message'] == VALIDATION_NAMESPACE.USER_EXISTS:
+            token = jwt.encode({'type': user.user_type,
+                                'username': user.username}, APP.secret_key, algorithm='HS256')
+            response = {'Message': VALIDATION_NAMESPACE.USER_EXISTS,
+                        'Token': token.decode('utf-8')}
         return response
 
 
@@ -50,6 +58,7 @@ class AddUser(Resource):
     def post(self):
         """ Post function for storing user credentials to db. """
         args = request.args
+        response = dict.fromkeys(['Message', 'Token'])
         try:
             user_type = str(args['type'])
             user_name = str(args['username'])
@@ -58,11 +67,14 @@ class AddUser(Resource):
             return REGISTRATION_NAMESPACE.REGISTRATION_ERROR
         new_user = User_Class(user_type, user_name, user_pass)
         # Response
-        response = new_user.check_if_user_exists()
-        if response == VALIDATION_NAMESPACE.UNKNOWN_USER:
+        response['Message'] = new_user.check_if_user_exists()
+        if response['Message'] == VALIDATION_NAMESPACE.UNKNOWN_USER:
             new_user.save_to_db()
-            response = REGISTRATION_NAMESPACE.get_correct_registration_message(new_user.username)
+            token = jwt.encode({'type': new_user.user_type,
+                                'username': new_user.username}, APP.secret_key, algorithm='HS256')
+            response = {'Message': REGISTRATION_NAMESPACE.get_correct_registration_message(
+                new_user.username), 'Token': token.decode('utf-8')}
         else:
-            response = REGISTRATION_NAMESPACE.USERNAME_EXISTS
+            response['Message'] = REGISTRATION_NAMESPACE.USERNAME_EXISTS
 
         return response
