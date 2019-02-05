@@ -9,6 +9,7 @@ name = "pypi"
 pandas = "*"
 fastkml = "*"
 lxml = "*"
+pytest = "*"
 
 [packages]
 flask = "*"
