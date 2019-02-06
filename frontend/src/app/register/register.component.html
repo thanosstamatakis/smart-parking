@@ -3,7 +3,7 @@
     <div class="card-body">
     <h1 class="card-title mx-auto text-center">Register</h1>
     <hr>
-    <form [formGroup]="rForm" (ngSubmit)="addUser(rForm.value)">
+    <form [formGroup]="rForm" (ngSubmit)="callRegisterUser(rForm.value)">
         <!-- Username Field -->
         <div class="form-group text-center">
             <label for="usernameBootField">Username</label>

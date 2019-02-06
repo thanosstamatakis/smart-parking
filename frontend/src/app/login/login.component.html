@@ -3,7 +3,7 @@
   <div class="card-body">
   <h1 class="card-title mx-auto text-center">Login</h1>
   <hr>
-  <form [formGroup]="rForm" (ngSubmit)="loginUser(rForm.value)">
+  <form [formGroup]="rForm" (ngSubmit)="callLoginUser(rForm.value)">
       <!-- Username Field -->
       <div class="form-group text-center">
           <label for="usernameBootField">Username</label>

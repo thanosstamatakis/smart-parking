@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { DataService } from '../data.service';
 import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, FormControl, Validators, AbstractControl } from '@angular/forms';
-import { JwtHelperService } from '@auth0/angular-jwt';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
+
 
 @Component({
   selector: 'app-login',
@@ -15,7 +16,7 @@ export class LoginComponent {
   password :string="";
   username: string="";
 
-  constructor(private _fb: FormBuilder, private _data: DataService, private _router: Router) { 
+  constructor(private _fb: FormBuilder, private _data: DataService, private _router: Router, private _auth: AuthService) { 
 
     this.rForm = _fb.group({
       username: [null, Validators.required],
@@ -24,26 +25,17 @@ export class LoginComponent {
   
   }
 
-  refresh(): void {
-    this._router.navigate(['']);
-    window.location.reload();
-    
-  }
-
-  loginUser(post) {
+  callLoginUser(post) {
     let body = {
       type: 'normal',
       username: post.username,
       password: post.password
     }
 
-    this._data.loginUser(body).subscribe(res => {
-      console.log(res);
-      console.log(res['Token'])
-      var token = JSON.stringify(res['Token']);
-      const helper = new JwtHelperService();
-      let decodedToken = helper.decodeToken(token);
-      console.log(decodedToken);
+    this._auth.loginUser(body).subscribe(res => {
+      this._auth.storeToken(res);
+      this._auth.getUserData();
+      this._router.navigate(['']);
     });
 
   }
