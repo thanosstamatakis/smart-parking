@@ -3,3 +3,6 @@ __pycache__/
 .vscode
 dist/
 .cache
+
+# Config file
+config.yaml
