@@ -1,4 +1,4 @@
-""" Module containing webmap classes """
+""" Module containing webmap classes. """
 # Python libs.
 import logging
 import redis
@@ -14,7 +14,7 @@ COORDS_REGEX = re.compile(r'POINT\ (\([0-9. ]*\)),\ POLYGON([()0-9. ,]*)\)')
 
 
 class Placemark():
-    """ Class representing a placemark retrieved from KML file """
+    """ Class representing a placemark retrieved from KML file. """
 
     def __init__(self, name, population, coordinates):
         """ Class constructor """
@@ -23,7 +23,7 @@ class Placemark():
         self.population = str(population)
 
     def _get_coordinates(self, coordinates):
-        """ Sanitize Placemark coordinates and return the corrected dict """
+        """ Sanitize Placemark coordinates and return the corrected dict. """
         try:
             point = re.search(COORDS_REGEX, str(coordinates)).group(1)
         except AttributeError:
@@ -39,7 +39,7 @@ class Placemark():
         return coordinates
 
     def _get_centroid(self):
-        """ Extract centroid from coordinates """
+        """ Extract centroid from coordinates. """
         new_list = []
         list1 = []
         # Get polygon points as a string.
