@@ -1,28 +1,51 @@
-  
-  
-  <div class="modal-header">
-    <h1 class="modal-title">Block Information</h1>
-    <hr>
-    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-      <span aria-hidden="true">&times;</span>
-    </button>
+<div class="modal-header d-flex justify-content-center">
+  <h1 class="modal-title">Block Information</h1>
+  <hr>
+  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+    <span aria-hidden="true">&times;</span>
+  </button>
+</div>
+<div class="modal-body ">
+  <div class="container">
+    <canvas id="lineChart">{{ chart }}</canvas>
   </div>
-  <div class="modal-body">
-    <div class="container">
-      <canvas id="lineChart">{{ chart }}</canvas>
+
+  <div class="container">
+    <div class="row d-flex justify-content-left" id="blockData">
+      <h5><b>Block Population:</b> {{blockPopulation}}</h5>
     </div>
+  </div>
 
-    <div id="blockInfo">
-      <div class="row" id="blockData">
-        <h5><b>Block Centroid:</b> {{blockCentroid}}</h5>
+  <div class="container">
+    <div class="row d-flex justify-content-left" id="blockData">
+      <h5><b>Block Demand at {{time['hour']}}:{{time['minute']}}:</b> {{liveDemand}}</h5>
+    </div>
+  </div>
+
+</div>
+
+
+
+
+  <div class="container d-flex justify-content-center" id="blockData">
+    <div class="row">
+      <div class="col-md" style="width:15em;">
+        <h5 class="text-center">Modify Time</h5>
+        <hr>
+        <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
       </div>
-
-      <div class="row" id="blockData">
-        <h5><b>Block Population:</b> {{blockPopulation}}</h5>
+      <div class="col-md" id="rightCol">
+        <h5 class="text-center">Modify Demand</h5>
+        <hr>
+        <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" (input)="getValue($event.target)"
+            min="0" max="100">
       </div>
     </div>
+  </div>
 
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
-  </div>
+  <button type="button" class="btn btn-outline-primary d-flex justify-content-center" id="submitDemand" (click)="timeClick()">Change
+    Demand</button>
+
+<div class="modal-footer">
+  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+</div>
