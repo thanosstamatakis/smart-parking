@@ -29,6 +29,7 @@ def get_clusters(user_location, radius):
     slots = np.array(slots)
     parking_slot_cluster = ParkingSlotsCluster(slots, user_location)
     clusters = parking_slot_cluster.get_clusters()
+
     return clusters
 
 

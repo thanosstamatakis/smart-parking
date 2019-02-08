@@ -78,6 +78,7 @@ class Placemark():
             redis_key, hash_to_store)
         LOGGER.debug(f'Add to key {redis_key}, hash {hash_to_store}')
         # Return the redis key placemark<id> to be used by children functions.
+
         return redis_key
 
 
@@ -132,12 +133,7 @@ class Polygon(Placemark):
 
     def _get_fixed_demand(self):
         """ Return fixed demand for the specific block. """
-        fixed_demand_factor = int(self.population)/1000
-        fixed_demand = list()
-        for index in range(24):
-            fixed_demand.append(round(
-                1 * fixed_demand_factor + fixed_demand_factor * rand.random(), 2))
-            if 0 < fixed_demand[index] <= 0.10:
-                fixed_demand[index] *= 10
+        fixed_demand = int(self.population) * 0.2
+        fixed_demand = [fixed_demand] * 24
 
         return fixed_demand
