@@ -19,11 +19,11 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 # clusters = parking_slot_cluster.get_clusters()
 
 
-def get_clusters(user_location, radius):
+def get_clusters(user_location, radius, time):
     """ Return all clusters """
     close_clusters = get_close_clusters(user_location, radius)
     LOGGER.debug(f'CLOSE CLUSTERS: {len(close_clusters)}')
-    parking_slots = get_parking_slots(close_clusters)
+    parking_slots = get_parking_slots(close_clusters, time)
     slots = [x for x in parking_slots.values()]
     LOGGER.debug(f'PARKING SLOTS: {slots}')
     slots = np.array(slots)
@@ -33,7 +33,7 @@ def get_clusters(user_location, radius):
     return clusters
 
 
-def get_parking_slots(clusters):
+def get_parking_slots(clusters, time):
     """ Return the parking slots of the cluster in long and lat format """
     def _check_for_pos_neg():
         """ If random number >= 0.5 then true. """
@@ -47,10 +47,12 @@ def get_parking_slots(clusters):
     for placemark_id, cluster in clusters.items():
         redis_key = ":".join(('placemark', placemark_id, 'polygon', 'slots'))
         parking_slots = redis_conn.get(redis_key)
+        parking_slots = _get_available_parking_slots(parking_slots, time,
+                                                     redis_key)
         distance_from_centroid = 50 * 0.0000089
         if not _check_for_pos_neg():
             distance_from_centroid = -distance_from_centroid
-        for parking_slot in parking_slots:
+        for parking_slot in range(parking_slots):
             cluster_parking_slots[placemark_id] = [
                 float(cluster[0]) + distance_from_centroid, float(cluster[1]) + distance_from_centroid]
 
@@ -83,3 +85,27 @@ def check_if_cluster_is_close(centroid, user_location, radius):
         return True
 
     return False
+
+
+def _get_available_parking_slots(parking_slots, time, redis_key):
+    """ Get available parking slots for specific block. """
+    parking_slots = int(parking_slots)
+    # Remove redis_key slots ending.
+    redis_key = ":".join((redis_key.split(':')[:-1]))
+    # Get fixed and normal demand and check if normal
+    # is greater that fixed. If not normal demand = fixed.
+    # Also round time to get coresponding demand.
+    time = int(round(float(time)))
+    fixed_demand = float(redis_conn.lrange(
+        f'{redis_key}:fixed_demand', 0, 0)[0])
+    normal_demand = float(redis_conn.lrange(
+        f'{redis_key}:demand', time-1, time-1)[0])
+    demand = normal_demand if normal_demand > fixed_demand else fixed_demand
+    # Get available parking slots.
+    LOGGER.debug(parking_slots)
+    parking_slots = parking_slots - \
+        int(round(parking_slots * demand)) if demand < 1 else 0
+    LOGGER.debug(f'Time: {time}, Fixed demand: {fixed_demand}, \
+    Norm: {normal_demand}, Demand: {demand}, Parking SLOTS: {parking_slots}')
+
+    return parking_slots
