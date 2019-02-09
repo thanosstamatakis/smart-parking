@@ -15,16 +15,23 @@ export class ModalContentComponent implements OnInit {
   chart: any;
 
   time: Object = {hour: 0, minute: 0};
+  displayTime: Date = new Date("T0:0");
+  drawTime: String = (this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'})).toString();
   value: any = null;
 
   blockPopulation: number;
   blockCentroid: String;
   liveDemand: number = null;
 
-  labels = ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00','08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+  labels: String[] = ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00',
+                      '08:00','09:00','10:00','11:00',' 12:00','13:00','14:00','15:00',
+                      '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
 
   timeClick() {
     console.log(this.time);
+    console.log(this.blockData.demand[this.time['hour']]);
+    this.blockData.demand[this.time['hour']] = (this.liveDemand/100).toString();
+    console.log(this.blockData.demand[this.time['hour']]);
   }
 
   getValue (event) {
@@ -33,44 +40,40 @@ export class ModalContentComponent implements OnInit {
   }
 
   timePickerInput(event){
-    console.log(event.originalTarget.textContent);
 
-    // console.log(event);
-    // console.log(event.originalTarget.previousElementSibling);
-    // console.log(event.originalTarget.nextElementSibling);
+    console.log(this.time);
 
-    if (event.originalTarget.previousElementSibling){
-      console.log(event.originalTarget.previousElementSibling.value);
+    this.displayTime.setHours(this.time['hour']);
+    this.displayTime.setMinutes(this.time['minute']);
+    this.drawTime = (this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'})).toString();
+    this.liveDemand = this.getDemand(this.time);
+    console.log(this.liveDemand);
+    console.log(this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'}));
+
+  }
+
+  getDemand(timeToFetchDemand: Object) {
+    let demand: number;
+    let hour: number = timeToFetchDemand['hour'];
+    let minute: number = timeToFetchDemand['minute'];
+    let nextHour: number;
+
+    (hour == 23) ? (nextHour = 24) : (nextHour = hour++);
+
+    if (hour == 23){
+      nextHour = 0;
     }else{
-      console.log(event.originalTarget.nextElementSibling.value);
+      nextHour++;
     }
 
+    console.log(nextHour);
 
-    var action:string = event.originalTarget.textContent; 
-    switch(action) { 
-      case "Increment minutes": { 
-          this.time['minute'] = +event.originalTarget.nextElementSibling.value; 
-          break; 
-      } 
-      case "Decrement minutes": { 
-          this.time['minute'] = +event.originalTarget.previousElementSibling.value; 
-          break; 
-      } 
-      case "Increment hours": {
-          this.time['hour'] = +event.originalTarget.nextElementSibling.value;
-          break;    
-      } 
-      case "Decrement hours": { 
-          this.time['hour'] = +event.originalTarget.previousElementSibling.value;
-          break; 
-      }  
-      default: { 
-          console.log("Invalid choice"); 
-          break;              
-      } 
+    if (minute <= 30) {
+      demand = (this.blockData.demand[hour])*100;
+    }else {
+      demand = (this.blockData.demand[nextHour])*100  ;
     }
-
-
+    return demand;
   }
 
   constructor(public activeModal: NgbActiveModal) {}
@@ -84,6 +87,9 @@ export class ModalContentComponent implements OnInit {
     var dataPointsFixed = new Array();
 
     this.liveDemand = 100*this.blockData.demand[0];
+
+    this.displayTime.toLocaleTimeString();
+    console.log(this.displayTime.toLocaleTimeString());
 
     for (var individual in this.blockData.demand) {
       dataPoints.push({'y': this.blockData.demand[individual]});

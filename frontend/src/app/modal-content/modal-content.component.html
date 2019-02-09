@@ -12,13 +12,15 @@
 
   <div class="container">
     <div class="row d-flex justify-content-left" id="blockData">
-      <h5><b>Block Population:</b> {{blockPopulation}}</h5>
+        <i style="width:2em; height:2em;" class="fas fa-home"><h5>{{blockPopulation}}</h5></i>
+      <!-- <p> {{blockPopulation}} </p> -->
     </div>
   </div>
 
   <div class="container">
     <div class="row d-flex justify-content-left" id="blockData">
-      <h5><b>Block Demand at {{time['hour']}}:{{time['minute']}}:</b> {{liveDemand}}</h5>
+        <i style="width:2em; height:2em;" class="fas fa-chart-bar"><h5>{{drawTime}}:{{liveDemand}}</h5></i>
+      <!-- <h5><b>Block Demand at {{drawTime}}:</b> {{liveDemand}}</h5> -->
     </div>
   </div>
 
@@ -37,15 +39,17 @@
       <div class="col-md" id="rightCol">
         <h5 class="text-center">Modify Demand</h5>
         <hr>
-        <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" (input)="getValue($event.target)"
+        <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{liveDemand}}" (input)="getValue($event.target)"
             min="0" max="100">
       </div>
     </div>
   </div>
 
-  <button type="button" class="btn btn-outline-primary d-flex justify-content-center" id="submitDemand" (click)="timeClick()">Change
-    Demand</button>
+
+  <div class="container d-flex justify-content-center">
+    <button type="button" class="btn btn-outline-primary d-flex justify-content-center" id="submitDemand" (click)="timeClick()">Confirm</button>
+  </div>
 
 <div class="modal-footer">
-  <button type="button" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
+  <button type="button d-flex justify-content-left" class="btn btn-outline-dark" (click)="activeModal.close('Close click')">Close</button>
 </div>
