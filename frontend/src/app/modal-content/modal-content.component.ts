@@ -34,31 +34,40 @@ export class ModalContentComponent implements OnInit {
     console.log(this.blockData.demand[this.time['hour']]);
   }
 
-  getValue (event) {
+  setValue (event) {
     console.log(event['valueAsNumber']);
     this.liveDemand = event['valueAsNumber'];
   }
 
   timePickerInput(event){
-
     console.log(this.time);
-
-    this.displayTime.setHours(this.time['hour']);
-    this.displayTime.setMinutes(this.time['minute']);
-    this.drawTime = (this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'})).toString();
-    this.liveDemand = this.getDemand(this.time);
+    this.setDisplayTime(this.time);
+    this.setDrawTime(['en-US'], {hour: '2-digit', minute:'2-digit'});
+    this.setDemand(this.time);
     console.log(this.liveDemand);
     console.log(this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'}));
 
   }
 
-  getDemand(timeToFetchDemand: Object) {
+  // method to set the displayTime date variable hours and minutes (that's all we need) 
+  setDisplayTime(time) {
+    this.displayTime.setHours(time['hour']);
+    this.displayTime.setMinutes(time['minute']);
+  }
+
+  // method to set the locale time to be drawn as a String
+  setDrawTime(locales: string[], options: Object){
+    this.drawTime = (this.displayTime.toLocaleTimeString(locales, options)).toString();
+  }
+
+  // method to get demand given the time 
+  setDemand(timeToFetchDemand: Object) {
     let demand: number;
     let hour: number = timeToFetchDemand['hour'];
     let minute: number = timeToFetchDemand['minute'];
     let nextHour: number;
 
-    (hour == 23) ? (nextHour = 24) : (nextHour = hour++);
+    // assign the next hour (for the special case that hour is 23)
 
     if (hour == 23){
       nextHour = 0;
@@ -66,14 +75,14 @@ export class ModalContentComponent implements OnInit {
       nextHour++;
     }
 
-    console.log(nextHour);
+    // assign demand as percentage depending on the minutes
 
     if (minute <= 30) {
       demand = (this.blockData.demand[hour])*100;
     }else {
       demand = (this.blockData.demand[nextHour])*100  ;
     }
-    return demand;
+    this.liveDemand = demand;
   }
 
   constructor(public activeModal: NgbActiveModal) {}

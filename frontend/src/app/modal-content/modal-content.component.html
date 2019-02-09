@@ -39,7 +39,7 @@
       <div class="col-md" id="rightCol">
         <h5 class="text-center">Modify Demand</h5>
         <hr>
-        <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{liveDemand}}" (input)="getValue($event.target)"
+        <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{liveDemand}}" (input)="setValue($event.target)"
             min="0" max="100">
       </div>
     </div>
