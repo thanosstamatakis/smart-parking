@@ -4,6 +4,7 @@ import { DataService } from '../data.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 import { ModalContentUnauthorizedComponent } from '../modal-content-unauthorized/modal-content-unauthorized.component';
+import { AuthService } from '../auth.service';
 
 @Component({
   selector: 'app-home',
@@ -17,8 +18,9 @@ export class HomeComponent implements OnInit {
   apiData: Object;
   visibleModal: Boolean = false;
   modalReference: Object = this.modalService;
+  isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
 
-  constructor(private data: DataService, private modalService: NgbModal) { }
+  constructor(private data: DataService, private modalService: NgbModal,private _auth: AuthService) { }
 
   insertToString = function insertToString(main_string, ins_string, pos) {
     if(typeof(pos) == "undefined") {
@@ -64,6 +66,12 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
 
 
+    this._auth.currentToken.subscribe(res => {
+      this.isAdmin = res['isAdmin'];
+      console.log('This is from home component.')
+      console.log(this.isAdmin);
+    });
+
     // Create map and add to viewport
     const cityMap = L.map('cityMap',{
       zoomControl: false
@@ -102,12 +110,15 @@ export class HomeComponent implements OnInit {
           blockToDraw.on('click', function(event){
 
             let blockData = event.target.blockData;
-            // var theModalData = theModalRef.open(ModalContentComponent,{
-            //   size: 'lg'
-            // });
-            var theModalData = theModalRef.open(ModalContentUnauthorizedComponent,{
-              size: 'lg'
-            });
+            if (this.isAdmin){
+              var theModalData = theModalRef.open(ModalContentComponent,{
+                size: 'lg'
+              });
+            }else{
+              var theModalData = theModalRef.open(ModalContentUnauthorizedComponent,{
+                size: 'lg'
+              });
+            }
             theModalData.componentInstance.blockData = blockData;
           });
         }
