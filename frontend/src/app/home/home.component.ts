@@ -17,10 +17,10 @@ export class HomeComponent implements OnInit {
   //Object to hold data from DataService
   apiData: Object;
   visibleModal: Boolean = false;
-  modalReference: Object = this.modalService;
+  modalReference: Object = this._modalService;
   isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
 
-  constructor(private data: DataService, private modalService: NgbModal, private _auth: AuthService) { }
+  constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService) { }
 
 
 
@@ -90,9 +90,23 @@ export class HomeComponent implements OnInit {
     } else {
       color = 'black';
     }
-    
+
     return color;
 
+  }
+
+  createMap(mapName: string){
+    let cityMap = L.map('cityMap',{
+      zoomControl: false
+    }).setView([40.62023756670292, 22.95810400084713], 17);
+
+    return cityMap;
+  }
+
+  addTileLayer(mapName: L.Map){
+    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
+      attribution: null,
+    }).addTo(mapName);
   }
 
   ngOnInit() {
@@ -105,19 +119,15 @@ export class HomeComponent implements OnInit {
     });
 
     // Create map and add to viewport
-    const cityMap = L.map('cityMap',{
-      zoomControl: false
-    }).setView([40.62023756670292, 22.95810400084713], 17);
+    const cityMap = this.createMap('cityMap');
 
     // Add tile layer to map
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png',{ 
-      attribution: null,
-    }).addTo(cityMap);
+    this.addTileLayer(cityMap);
 
-    // Get the bootstrap modalService 
-    var theModalRef = this.modalService;
+    // Get the bootstrap _modalService 
+    var theModalRef = this._modalService;
     
-    this.data.getLanguages().subscribe(data => {this.apiData = data;
+    this._data.getLanguages().subscribe(data => {this.apiData = data;
 
       var blockCoords;
       var blockToDraw;
