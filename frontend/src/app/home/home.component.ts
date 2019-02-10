@@ -20,7 +20,9 @@ export class HomeComponent implements OnInit {
   modalReference: Object = this.modalService;
   isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
 
-  constructor(private data: DataService, private modalService: NgbModal,private _auth: AuthService) { }
+  constructor(private data: DataService, private modalService: NgbModal, private _auth: AuthService) { }
+
+
 
   insertToString = function insertToString(main_string, ins_string, pos) {
     if(typeof(pos) == "undefined") {
@@ -31,7 +33,6 @@ export class HomeComponent implements OnInit {
     }
     return main_string.slice(0, pos) + ins_string + main_string.slice(pos);
   }  
-
 
   sanitizeCoords = function sanitizeCoords(coords, insertToString) {
     var members;
@@ -62,14 +63,45 @@ export class HomeComponent implements OnInit {
     return name;
   }
  
+  getBlockColor(block: Object){
+    let slots = parseInt(block['parking_slots']);
+    let demand = block['demand'];
+    let population = parseInt(block['population']);
+    let color: string = ''; 
+    var d = new Date();
+    let time = d.getHours();
+
+    if (!this.isAdmin){
+      if ((population*0.2) >= slots) {
+        color = 'red';
+      } else {
+        let available = slots - 0.2*population;
+        available = Math.round(available - demand[time]*available);
+        let percentage = 100 - Math.round((available/slots)*100);
+        // console.log(percentage+"%");
+          if (percentage <= 59){
+            color = 'green';
+          }else if (percentage <= 84 ) {
+            color = 'yellow';
+          }else{
+            color = 'red';
+          }
+      }
+    } else {
+      color = 'black';
+    }
+    
+    return color;
+
+  }
 
   ngOnInit() {
 
-
+    //Initiate user status (if user is admin or not)
     this._auth.currentToken.subscribe(res => {
       this.isAdmin = res['isAdmin'];
-      console.log('This is from home component.')
-      console.log(this.isAdmin);
+      // console.log('This is from home component.')
+      // console.log(this.isAdmin);
     });
 
     // Create map and add to viewport
@@ -101,7 +133,7 @@ export class HomeComponent implements OnInit {
 
         //Check if a block has polygon data and draw it
         if (blockCoords[0]!=0){
-          blockToDraw = L.polygon(blockCoords, {fillColor: 'black', stroke: false, fillOpacity:0.18});
+          blockToDraw = L.polygon(blockCoords, {fillColor: this.getBlockColor(this.apiData[individual]), stroke: false, fillOpacity:0.18});
           blockToDraw['blockData'] = blockData;
           blockToDraw.addTo(cityMap);
 
