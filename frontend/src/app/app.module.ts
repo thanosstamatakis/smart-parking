@@ -13,6 +13,7 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './register/register.component';
 import { ModalContentComponent } from './modal-content/modal-content.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ModalContentUnauthorizedComponent } from './modal-content-unauthorized/modal-content-unauthorized.component';
 
 
 @NgModule({
@@ -25,10 +26,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     ManageComponent,
     LoginComponent,
     RegisterComponent,
-    ModalContentComponent
+    ModalContentComponent,
+    ModalContentUnauthorizedComponent
   ],
   entryComponents: [
-    ModalContentComponent
+    ModalContentComponent,
+    ModalContentUnauthorizedComponent
   ],
   imports: [
     BrowserModule,

@@ -3,6 +3,7 @@ import * as L from 'leaflet';
 import { DataService } from '../data.service';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
+import { ModalContentUnauthorizedComponent } from '../modal-content-unauthorized/modal-content-unauthorized.component';
 
 @Component({
   selector: 'app-home',
@@ -101,10 +102,12 @@ export class HomeComponent implements OnInit {
           blockToDraw.on('click', function(event){
 
             let blockData = event.target.blockData;
-            var theModalData = theModalRef.open(ModalContentComponent,{
+            // var theModalData = theModalRef.open(ModalContentComponent,{
+            //   size: 'lg'
+            // });
+            var theModalData = theModalRef.open(ModalContentUnauthorizedComponent,{
               size: 'lg'
             });
-
             theModalData.componentInstance.blockData = blockData;
           });
         }
