@@ -63,35 +63,18 @@ export class HomeComponent implements OnInit {
     return name;
   }
 
-  getBlockColor(block: Object) {
-    let slots = parseInt(block['parking_slots']);
-    let demand = block['demand'];
-    let population = parseInt(block['population']);
-    let color: string = '';
-    var d = new Date();
-    let time = d.getHours();
+  initializeColors<Object>() {
+    let formatedTime: number = 0;
+    let date = new Date();
+    let hours = date.getHours();
+    let minutes = date.getMinutes();
+    var colors = null;
 
-    if (!this.isAdmin) {
-      if ((population * 0.2) >= slots) {
-        color = 'red';
-      } else {
-        let available = slots - 0.2 * population;
-        available = Math.round(available - demand[time] * available);
-        let percentage = 100 - Math.round((available / slots) * 100);
-        // console.log(percentage+"%");
-        if (percentage <= 59) {
-          color = 'green';
-        } else if (percentage <= 84) {
-          color = 'yellow';
-        } else {
-          color = 'red';
-        }
-      }
-    } else {
-      color = 'black';
-    }
+    formatedTime = hours + 0.01 * minutes;
 
-    return color;
+    return this._data.getColors(formatedTime).subscribe(res => { });
+
+    // return colors;
 
   }
 
@@ -111,6 +94,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
+    // var initialColors: Object = this.initializeColors();
+
+    console.log(this.initializeColors());
+
+
     //Initiate user status (if user is admin or not)
     this._auth.currentToken.subscribe(res => {
       this.isAdmin = res['isAdmin'];
@@ -125,7 +113,7 @@ export class HomeComponent implements OnInit {
     // Get the bootstrap _modalService 
     var theModalRef = this._modalService;
 
-    this._data.getLanguages().subscribe(data => {
+    this._data.getPolygons().subscribe(data => {
       this.apiData = data;
 
       var polygon;
