@@ -111,3 +111,18 @@ class PlacemarkDemands(Resource):
         response = lib.get_polygon_attributes()
 
         return response
+
+
+@NAMESPACE.route('/availability/color')
+class PlacemarkAvailability(Resource):
+    """
+    Api class placemark representing all placemark availability.
+    """
+    @NAMESPACE.param('time', 'Time of simulation.')
+    def get(self):
+        """ Return all placemark colors based on avaialbility. """
+        args = flask.request.args
+        availability_per_block = lib.get_availability(args['time'])
+        response = lib.map_availability_to_color(availability_per_block)
+
+        return response

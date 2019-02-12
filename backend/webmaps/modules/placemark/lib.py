@@ -99,3 +99,43 @@ def get_demands(placemark_id):
         demands[demand_type] = redis_conn.lrange(temp_redis_key, 0, -1)
 
     return demands
+
+
+def get_availability(time_of_simulation):
+    """
+    Return the percentage of availability for each block. 
+    """
+    # Round time
+    time_of_simulation = int(round(float(time_of_simulation)))
+
+    availability_per_block = dict()
+    placemarks = redis_conn.smembers('placemark')
+    for placemark in placemarks:
+        redis_key = ":".join(('placemark', str(placemark), 'polygon'))
+        #LOGGER.debug(f'redis key: {redis_key}')
+        real_demand = float(redis_conn.lrange(
+            f'{redis_key}:demand', time_of_simulation - 1, time_of_simulation - 1)[0])
+        fixed_demand = float(redis_conn.lrange(
+            f'{redis_key}:fixed_demand', time_of_simulation - 1, time_of_simulation - 1)[0])
+
+        if real_demand >= 1 or fixed_demand >= 1:
+            availability_per_block[placemark] = 0
+            LOGGER.debug(f'Fixed {fixed_demand}, {real_demand}')
+        else:
+            availability_per_block[placemark] = 1 - \
+                real_demand if real_demand > fixed_demand else 1 - fixed_demand
+
+    return availability_per_block
+
+
+def map_availability_to_color(availability_per_block):
+    """ Map availability of each block to the corresponding color. """
+    range_to_color = {0.59: 'green', 0.84: 'yellow', 1: 'red'}
+    for placemark_id, availability in availability_per_block.items():
+        for max_num, color in range_to_color.items():
+            if availability <= max_num:
+                availability_per_block[placemark_id] = color
+                LOGGER.debug(f'{placemark_id} {availability} {color}')
+                break
+
+    return availability_per_block
