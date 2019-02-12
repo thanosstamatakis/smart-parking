@@ -93,7 +93,7 @@ def update_demand(placemark_id, demand_per_hour):
 
 def get_demands(placemark_id):
     """
-    Return spesific placemark's real and fixed demand 
+    Return spesific placemark's real and fixed demand
     from database.
     """
     demand_types = ['demand', 'fixed_demand']

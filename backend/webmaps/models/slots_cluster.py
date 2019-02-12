@@ -99,6 +99,7 @@ class ParkingSlotsCluster():
         """ Limit lists floats to 2 decimals and return. """
         for index, number in enumerate(list_to_sanitize):
             LOGGER.debug(f"LIST TO SANITIZE: {list_to_sanitize}")
-            list_to_sanitize[index] = float("%.2f" % round(float(number), 2))
+            # list_to_sanitize[index] = float("%.2f" % round(float(number), 2))
+            list_to_sanitize[index] = float(number)
 
         return list_to_sanitize
