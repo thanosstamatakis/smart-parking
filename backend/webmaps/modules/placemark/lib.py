@@ -30,11 +30,14 @@ def get_polygon_attributes():
     """
     response = dict()
     polygon_elements = dict()
+    # Get placemark ids.
     redis_key = 'placemark'
     placemark_ids = redis_conn.smembers(redis_key)
     for placemark_id in placemark_ids:
+        # Get polygon attrs: slots, demand, fixed demand.
         redis_key = ":".join(('placemark', str(placemark_id), 'polygon'))
         polygon_attrs = redis_conn.smembers(redis_key)
+        # Get slots.
         try:
             polygon_elements['parking_slots'] = redis_conn.get(
                 ":".join((redis_key, 'slots')))
@@ -42,6 +45,7 @@ def get_polygon_attributes():
             polygon_elements['parking_slots'] = 0
         LOGGER.debug(
             f'Get from key {redis_key}:slots value {polygon_elements["parking_slots"]}')
+        # Get demands.
         for polygon_attr in set(polygon_attrs) - {'slots'}:
             temp_key = ":".join((redis_key, str(polygon_attr)))
             polygon_elements[polygon_attr] = redis_conn.lrange(temp_key, 0, -1)
@@ -68,6 +72,7 @@ def delete_placemarks():
 def update_demand(placemark_id, demand_per_hour):
     """ Update a placemark's demand in database. """
     redis_key = ":".join(('placemark', str(placemark_id), 'polygon', 'demand'))
+    # Create redis pipe for faster redis commands execution.
     redis_pipe = redis_conn.pipeline()
     response = 'An error occured!'
     try:
@@ -77,6 +82,7 @@ def update_demand(placemark_id, demand_per_hour):
                 f'Set to key: {redis_key} at list position: {time} value: {demand}')
     except ValueError:
         pass
+    # Execute pipe commands.
     try:
         response = redis_pipe.execute()
     except redis.exceptions.ResponseError:
@@ -86,14 +92,14 @@ def update_demand(placemark_id, demand_per_hour):
 
 
 def get_demands(placemark_id):
-    """ 
+    """
     Return spesific placemark's real and fixed demand 
     from database.
     """
     demand_types = ['demand', 'fixed_demand']
     redis_key = ":".join(('placemark', str(placemark_id), 'polygon'))
     demands = dict.fromkeys(demand_types)
-
+    # Get demands from db.
     for demand_type in demand_types:
         temp_redis_key = ":".join((redis_key, demand_type))
         demands[demand_type] = redis_conn.lrange(temp_redis_key, 0, -1)
@@ -101,39 +107,44 @@ def get_demands(placemark_id):
     return demands
 
 
-def get_availability(time_of_simulation):
+def get_demanding(time_of_simulation):
     """
     Return the percentage of availability for each block. 
     """
-    # Round time
+    # Round time.
     time_of_simulation = int(round(float(time_of_simulation)))
-
     availability_per_block = dict()
     placemarks = redis_conn.smembers('placemark')
     for placemark in placemarks:
-        redis_key = ":".join(('placemark', str(placemark), 'polygon'))
-        #LOGGER.debug(f'redis key: {redis_key}')
+        # Get block's population.
+        redis_key = ":".join(('placemark', str(placemark)))
+        population = int(redis_conn.hget(redis_key, 'population'))
+        # Get real and fixed demand.
+        redis_key = ":".join((redis_key, 'polygon'))
         real_demand = float(redis_conn.lrange(
-            f'{redis_key}:demand', time_of_simulation - 1, time_of_simulation - 1)[0])
+            f'{redis_key}:demand', time_of_simulation - 1,
+            time_of_simulation - 1)[0])
         fixed_demand = float(redis_conn.lrange(
-            f'{redis_key}:fixed_demand', time_of_simulation - 1, time_of_simulation - 1)[0])
-
-        if real_demand >= 1 or fixed_demand >= 1:
-            availability_per_block[placemark] = 0
-            LOGGER.debug(f'Fixed {fixed_demand}, {real_demand}')
-        else:
-            availability_per_block[placemark] = 1 - \
-                real_demand if real_demand > fixed_demand else 1 - fixed_demand
+            f'{redis_key}:fixed_demand', time_of_simulation - 1,
+            time_of_simulation - 1)[0])
+        # Get demanding and available parking slots.
+        parking_slots = float(redis_conn.get(f'{redis_key}:slots'))
+        fixed_demand_parking_slots = fixed_demand * population
+        demanding_slots = fixed_demand_parking_slots + \
+            (parking_slots - fixed_demand_parking_slots) * real_demand
+        # Return the percentage of demandin parking slots.
+        availability_per_block[placemark] = demanding_slots/parking_slots
 
     return availability_per_block
 
 
-def map_availability_to_color(availability_per_block):
-    """ Map availability of each block to the corresponding color. """
+def map_demand_to_color(availability_per_block):
+    """ Map parkin slot demand of each block to the corresponding color. """
     range_to_color = {0.59: 'green', 0.84: 'yellow', 1: 'red'}
     for placemark_id, availability in availability_per_block.items():
         for max_num, color in range_to_color.items():
-            if availability <= max_num:
+            # If availability > 1 use 1.
+            if min(availability, 1) <= max_num:
                 availability_per_block[placemark_id] = color
                 LOGGER.debug(f'{placemark_id} {availability} {color}')
                 break
