@@ -133,7 +133,6 @@ class Polygon(Placemark):
 
     def _get_fixed_demand(self):
         """ Return fixed demand for the specific block. """
-        fixed_demand = int(self.population) * 0.2
-        fixed_demand = [fixed_demand] * 24
+        fixed_demand = [0.2] * 24
 
         return fixed_demand
