@@ -12,8 +12,14 @@ export class DataService {
 
   constructor(private _http: HttpClient) { }
 
-  getLanguages(): Observable <object> {
+  getPolygons(): Observable<object> {
     return this._http.get('http://localhost:8080/api/placemark/all');
+  }
+
+  getColors(time: number) {
+    let params = new HttpParams()
+      .set('time', time.toString());
+    return this._http.get('http://localhost:8080/api/placemark/availability/color', { params: params });
   }
 
   FileSelected(event) {
@@ -32,12 +38,12 @@ export class DataService {
       });
   }
 
-  FlushDB(){
+  FlushDB() {
     return this._http.delete('http://localhost:8080/api/placemark/all',
-    {
-      reportProgress: true,
-      observe: 'events'
-    });
+      {
+        reportProgress: true,
+        observe: 'events'
+      });
   }
 
 
