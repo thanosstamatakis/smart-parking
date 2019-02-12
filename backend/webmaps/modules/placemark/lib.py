@@ -58,6 +58,7 @@ def delete_placemarks():
 
     return response
 
+
 def update_demand(placemark_id, demand_per_hour):
     """ Update a placemark's demand in database. """
     redis_key = ":".join(('placemark', str(placemark_id), 'polygon', 'demand'))
@@ -66,12 +67,29 @@ def update_demand(placemark_id, demand_per_hour):
     try:
         for time, demand in demand_per_hour.items():
             redis_pipe.lset(redis_key, int(time), demand)
-            LOGGER.debug(f'Set to key: {redis_key} at list position: {time} value: {demand}')
+            LOGGER.debug(
+                f'Set to key: {redis_key} at list position: {time} value: {demand}')
     except ValueError:
         pass
     try:
         response = redis_pipe.execute()
     except redis.exceptions.ResponseError:
         pass
-    
+
     return response
+
+
+def get_demands(placemark_id):
+    """ 
+    Return spesific placemark's real and fixed demand 
+    from database.
+    """
+    demand_types = ['demand', 'fixed_demand']
+    redis_key = ":".join(('placemark', str(placemark_id), 'polygon'))
+    demands = dict.fromkeys(demand_types)
+
+    for demand_type in demand_types:
+        temp_redis_key = ":".join((redis_key, demand_type))
+        demands[demand_type] = redis_conn.lrange(temp_redis_key, 0, -1)
+
+    return demands

@@ -41,7 +41,8 @@ class Placemarks(Resource):
         """ Delete all placemark objects. """
         response = lib.delete_placemarks()
         # Response
-        response = PLACEMARK_NAMESPACE.get_database_deletion_message(len(response))
+        response = PLACEMARK_NAMESPACE.get_database_deletion_message(
+            len(response))
 
         return response
 
@@ -65,7 +66,8 @@ class Placemark(Resource):
             kml_parser = KmlParser(kml_file)
             kml_parser.parse()
             file_name = werkzeug.utils.secure_filename(kml_file.filename)
-            response = PLACEMARK_NAMESPACE.get_correct_file_parsing_message(file_name)
+            response = PLACEMARK_NAMESPACE.get_correct_file_parsing_message(
+                file_name)
 
         return response
 
@@ -84,8 +86,15 @@ class PlacemarkDemand(Resource):
         # Call lib function to update demand.
         response = lib.update_demand(placemark_id, demand)
         if response == [True]:
-            response = PLACEMARK_NAMESPACE.get_correct_demand_update_message(placemark_id)
+            response = PLACEMARK_NAMESPACE.get_correct_demand_update_message(
+                placemark_id)
         else:
             response = PLACEMARK_NAMESPACE.DEMAND_ERROR
+
+        return response
+
+    def get(self, placemark_id):
+        """ Get spesific's block real and fixed demand. """
+        response = lib.get_demands(placemark_id)
 
         return response
