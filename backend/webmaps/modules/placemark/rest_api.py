@@ -98,3 +98,16 @@ class PlacemarkDemand(Resource):
         response = lib.get_demands(placemark_id)
 
         return response
+
+
+@NAMESPACE.route('/demand')
+class PlacemarkDemands(Resource):
+    """
+    Api class placemark representing all placemark demands.
+    """
+
+    def get(self):
+        """ Return all placemark demands and parking slots. """
+        response = lib.get_polygon_attributes()
+
+        return response

@@ -19,32 +19,38 @@ def get_placemark_objects():
     for obj in placemark_objects:
         placemark_num = obj
         temp_key = ":".join((redis_key, placemark_num))
-        placemark_attr = redis_conn.hgetall(temp_key)
-        polygon_attrs = get_polygon_attributes(temp_key)
-        response[obj] = {**placemark_attr, **polygon_attrs}
+        response[obj] = redis_conn.hgetall(temp_key)
+
     return response
 
 
-def get_polygon_attributes(redis_key):
+def get_polygon_attributes():
     """
-    Return polygon attributes for given placemark.
+    Return polygon attributes for each placemark.
     """
+    response = dict()
     polygon_elements = dict()
-    redis_key = ":".join((redis_key, 'polygon'))
-    polygon_attrs = redis_conn.smembers(redis_key)
-    try:
-        polygon_elements['parking_slots'] = redis_conn.get(
-            ":".join((redis_key, 'slots')))
-    except KeyError:
-        polygon_elements['parking_slots'] = 0
-    LOGGER.debug(
-        f'Get from key {redis_key}:slots value {polygon_elements["parking_slots"]}')
-    for polygon_attr in set(polygon_attrs) - {'slots'}:
-        temp_key = ":".join((redis_key, str(polygon_attr)))
-        polygon_elements[polygon_attr] = redis_conn.lrange(temp_key, 0, -1)
+    redis_key = 'placemark'
+    placemark_ids = redis_conn.smembers(redis_key)
+    for placemark_id in placemark_ids:
+        redis_key = ":".join(('placemark', str(placemark_id), 'polygon'))
+        polygon_attrs = redis_conn.smembers(redis_key)
+        try:
+            polygon_elements['parking_slots'] = redis_conn.get(
+                ":".join((redis_key, 'slots')))
+        except KeyError:
+            polygon_elements['parking_slots'] = 0
         LOGGER.debug(
-            f'Get from key {temp_key} value {polygon_elements[polygon_attr]}')
-    return polygon_elements
+            f'Get from key {redis_key}:slots value {polygon_elements["parking_slots"]}')
+        for polygon_attr in set(polygon_attrs) - {'slots'}:
+            temp_key = ":".join((redis_key, str(polygon_attr)))
+            polygon_elements[polygon_attr] = redis_conn.lrange(temp_key, 0, -1)
+            LOGGER.debug(
+                f'Get from key {temp_key} value {polygon_elements[polygon_attr]}')
+
+        response[placemark_id] = [polygon_elements]
+
+    return response
 
 
 def delete_placemarks():
