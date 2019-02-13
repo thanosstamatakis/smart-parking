@@ -11,6 +11,7 @@ def placemark_mock():
     """ Return mock Placemark object. """
     with mock.patch.object(Placemark, "__init__", lambda x: None):
         mock_obj = Placemark()
+
         return mock_obj
 
 
@@ -23,6 +24,7 @@ def test_get_coordinates(coordinates, result, placemark_mock):
     """ Test coordinates sanitization in  placemark class. """
     # placemark_mock.coordinates = coordinates
     coordinates = placemark_mock._get_coordinates(coordinates)
+
     assert result == coordinates
 
 
@@ -35,4 +37,5 @@ def test_get_centroid(coordinates, result, placemark_mock):
     """ Test centroid extraction and sanitization from coordinates. """
     placemark_mock.coordinates = coordinates
     centroid = placemark_mock._get_centroid()
+
     assert result == centroid
