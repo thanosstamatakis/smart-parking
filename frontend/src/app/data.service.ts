@@ -16,10 +16,13 @@ export class DataService {
     return this._http.get('http://localhost:8080/api/placemark/all');
   }
 
-  getColors(time: number) {
+  async getColors(time: number) {
     let params = new HttpParams()
       .set('time', time.toString());
-    return this._http.get('http://localhost:8080/api/placemark/availability/color', { params: params });
+    let colorPromise = await this._http.get('http://localhost:8080/api/placemark/availability/color', { params: params }).toPromise();
+    let colors = Promise.resolve(colorPromise);
+    return colors;
+
   }
 
   FileSelected(event) {

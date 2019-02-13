@@ -6,6 +6,7 @@ import { ModalContentComponent } from '../modal-content/modal-content.component'
 import { ModalContentUnauthorizedComponent } from '../modal-content-unauthorized/modal-content-unauthorized.component';
 import { AuthService } from '../auth.service';
 
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -19,6 +20,7 @@ export class HomeComponent implements OnInit {
   visibleModal: Boolean = false;
   modalReference: Object = this._modalService;
   isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
+
 
   constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService) { }
 
@@ -63,19 +65,15 @@ export class HomeComponent implements OnInit {
     return name;
   }
 
-  initializeColors<Object>() {
+  getCurrentTime() {
     let formatedTime: number = 0;
     let date = new Date();
     let hours = date.getHours();
     let minutes = date.getMinutes();
-    var colors = null;
 
     formatedTime = hours + 0.01 * minutes;
 
-    return this._data.getColors(formatedTime).subscribe(res => { });
-
-    // return colors;
-
+    return formatedTime;
   }
 
   createMap(mapName: string) {
@@ -92,12 +90,15 @@ export class HomeComponent implements OnInit {
     }).addTo(mapName);
   }
 
-  ngOnInit() {
+  async getInitColors(time) {
+    var colors = await this._data.getColors(time);
+    return colors;
+  }
 
-    // var initialColors: Object = this.initializeColors();
+  async ngOnInit() {
+    var colors = await this.getInitColors(this.getCurrentTime());
 
-    console.log(this.initializeColors());
-
+    console.log(colors[1]);
 
     //Initiate user status (if user is admin or not)
     this._auth.currentToken.subscribe(res => {
@@ -131,7 +132,7 @@ export class HomeComponent implements OnInit {
 
         //Check if a block has polygon data and draw it
         if (polygon[0] != 0) {
-          polygonLayer = L.polygon(polygon, { fillColor: 'black', stroke: false, fillOpacity: 0.18 });
+          polygonLayer = L.polygon(polygon, { fillColor: colors[individual], stroke: false, fillOpacity: 0.18 });
           polygonLayer['polygonSpecs'] = polygonSpecs;
           polygonLayer['polygonNumber'] = parseInt(individual);
           polygonLayer.addTo(cityMap);
@@ -149,6 +150,7 @@ export class HomeComponent implements OnInit {
               var theModalData = theModalRef.open(ModalContentUnauthorizedComponent, {
                 size: 'lg'
               });
+              console.log(colors);
             }
             theModalData.componentInstance.polygonSpecs = polygonSpecs;
           });
