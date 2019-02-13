@@ -70,13 +70,14 @@ class ParkingSlotsCluster():
         # Find clusters with max lengths.
         max_points_clusters.append(
             [cluster for cluster in clusters if len(cluster) == max_len])
+        max_points_clusters = max_points_clusters[0]
 
         return max_points_clusters
 
     def _get_clusters_centroid(self, cluster):
         """ Get specific cluster's coordinates. """
         # Use Multipoint to get cluster
-        centroid = MultiPoint(cluster[0]).centroid
+        centroid = MultiPoint(cluster).centroid
         LOGGER.debug(f"CENTROID PASSED: {centroid}")
         # Sanitize format of centroid
         centroid = point_sanitization(centroid)
