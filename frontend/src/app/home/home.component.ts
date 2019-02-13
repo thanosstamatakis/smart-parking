@@ -123,6 +123,7 @@ export class HomeComponent implements OnInit {
       for (var individual in this.apiData) {
         //declarations inside the loop
         let polygonSpecs = (this.apiData[individual]);
+        polygonSpecs['id'] = parseInt(individual);
 
 
         //Get polygon data that was received through the service, sanitize the data so it is readable from leaflet functions
@@ -141,6 +142,9 @@ export class HomeComponent implements OnInit {
           //Define action for click on an individual polygon
           polygonLayer.on('click', function (event) {
 
+            console.log(event);
+
+            let polygonNumber = event.target.polygonNumber;
             let polygonSpecs = event.target.polygonSpecs;
             if (this.isAdmin) {
               var theModalData = theModalRef.open(ModalContentComponent, {
@@ -150,8 +154,8 @@ export class HomeComponent implements OnInit {
               var theModalData = theModalRef.open(ModalContentUnauthorizedComponent, {
                 size: 'lg'
               });
-              console.log(colors);
             }
+            // theModalData.componentInstance.polygonNumber = polygonNumber;
             theModalData.componentInstance.polygonSpecs = polygonSpecs;
           });
         }

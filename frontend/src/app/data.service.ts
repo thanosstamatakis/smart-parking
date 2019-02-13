@@ -49,6 +49,12 @@ export class DataService {
       });
   }
 
+  async getPolygonDemand(polygonId) {
+    let demandPromise = await this._http.get('http://localhost:8080/api/placemark/demand/' + polygonId).toPromise();
+    let demand = Promise.resolve(demandPromise);
+    return demand;
+  }
+
 
 
 
