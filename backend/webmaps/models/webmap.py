@@ -7,6 +7,7 @@ import random as rand
 from shapely.geometry import MultiPoint
 # Project files.
 from config import CONFIGURATION
+from webmaps.utils import general_sanitizations
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 redis_con = redis.Redis(host=CONFIGURATION.db_conn, decode_responses=True)
@@ -89,8 +90,9 @@ class Polygon(Placemark):
         """ Class constructor """
         super().__init__(name, population, coordinates)
         self.parking_slots = rand.randint(10, 50)
+        self._get_parking_slots()
         self.demand = demand
-        self.fixed_demand = self._get_fixed_demand()
+        self.fixed_demand = self._get_fixed_demand(self)
 
     def save_to_db(self):
         """ Save polygon to database. """
@@ -131,8 +133,30 @@ class Polygon(Placemark):
 
         return demands_dict
 
+    def _get_parking_slots(self):
+        """ Return parking slots based on polygons area. """
+        polygon_area = self._get_polygon_area(
+            self, self.coordinates['polygon'])
+        LOGGER.debug(f'POLYGON AREA: {round(polygon_area*300000000)}')
+
+    @staticmethod
     def _get_fixed_demand(self):
         """ Return fixed demand for the specific block. """
         fixed_demand = [0.2] * 24
 
         return fixed_demand
+
+    @staticmethod
+    def _get_polygon_area(self, coordinates):
+        # Calculate area of polygon
+        polygon_points = general_sanitizations.polygon_sanitization(
+            coordinates)
+        area = 0
+        size_of_list = len(polygon_points)
+        for x in range(size_of_list):
+            y = (x + 1) % size_of_list
+            area += polygon_points[x][0] * polygon_points[y][1]
+            area -= polygon_points[y][0] * polygon_points[x][1]
+        area = abs(area) / 2.0
+
+        return area
