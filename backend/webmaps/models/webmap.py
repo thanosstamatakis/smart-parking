@@ -89,8 +89,7 @@ class Polygon(Placemark):
     def __init__(self, name, population, coordinates, demand):
         """ Class constructor """
         super().__init__(name, population, coordinates)
-        self.parking_slots = rand.randint(10, 50)
-        self._get_parking_slots()
+        self.parking_slots = self._get_parking_slots()
         self.demand = demand
         self.fixed_demand = self._get_fixed_demand(self)
 
@@ -135,9 +134,16 @@ class Polygon(Placemark):
 
     def _get_parking_slots(self):
         """ Return parking slots based on polygons area. """
-        polygon_area = self._get_polygon_area(
-            self, self.coordinates['polygon'])
-        LOGGER.debug(f'POLYGON AREA: {round(polygon_area*300000000)}')
+        ps_factor = 300000000
+        if self.coordinates['polygon']:
+            polygon_area = self._get_polygon_area(
+                self, self.coordinates['polygon'])
+            parking_slots = round(polygon_area * ps_factor)
+        else:
+            # If polygon has no coordinates ps_slots = 20.
+            parking_slots = 20
+
+        return parking_slots
 
     @staticmethod
     def _get_fixed_demand(self):
@@ -148,15 +154,20 @@ class Polygon(Placemark):
 
     @staticmethod
     def _get_polygon_area(self, coordinates):
-        # Calculate area of polygon
+        """ 
+        Return the area of the polygon given the polygon 
+        point coordinates.
+        """
+        # Sanitize coordinates.
         polygon_points = general_sanitizations.polygon_sanitization(
             coordinates)
+        # Calculate area using shoelace formula.
         area = 0
         size_of_list = len(polygon_points)
         for x in range(size_of_list):
             y = (x + 1) % size_of_list
             area += polygon_points[x][0] * polygon_points[y][1]
             area -= polygon_points[y][0] * polygon_points[x][1]
-        area = abs(area) / 2.0
+        area = (abs(area) / 2.0)
 
         return area
