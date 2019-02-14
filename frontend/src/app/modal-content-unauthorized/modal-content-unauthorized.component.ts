@@ -1,8 +1,9 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output } from '@angular/core';
 import { NgbActiveModal, NgbModal, NgbTab, NgbTabset } from '@ng-bootstrap/ng-bootstrap';
 import { Chart } from 'chart.js';
 import { polygon } from 'leaflet';
 import { DataService } from '../data.service';
+import { SimulationService } from '../simulation.service';
 
 @Component({
   selector: 'app-modal-content-unauthorized',
@@ -13,6 +14,7 @@ export class ModalContentUnauthorizedComponent implements OnInit {
 
   //Get input from parent element
   @Input() polygonSpecs;
+  @Output() result;
 
   //initialization
   chart: any;
@@ -89,8 +91,16 @@ export class ModalContentUnauthorizedComponent implements OnInit {
     return demand;
   }
 
+  closeAndSubmit() {
+    this._sim.setSimOptions({
+      runSimulations: true,
+      time: this.time
+    });
+    this.activeModal.close('Close click')
+  }
 
-  constructor(public activeModal: NgbActiveModal, private _data: DataService) { }
+
+  constructor(public activeModal: NgbActiveModal, private _data: DataService, private _sim: SimulationService) { }
 
   async ngOnInit() {
 

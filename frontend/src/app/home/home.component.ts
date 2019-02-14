@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { DataService } from '../data.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 import { ModalContentUnauthorizedComponent } from '../modal-content-unauthorized/modal-content-unauthorized.component';
 import { AuthService } from '../auth.service';
+import { SimulationService } from '../simulation.service';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class HomeComponent implements OnInit {
   isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
 
 
-  constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService) { }
+  constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService, private _sim: SimulationService) { }
 
 
 
@@ -95,10 +96,22 @@ export class HomeComponent implements OnInit {
     return colors;
   }
 
+  runSimulations() {
+    console.log("Hi from Run Simulations");
+  }
+
   async ngOnInit() {
     var colors = await this.getInitColors(this.getCurrentTime());
 
-    console.log(colors[1]);
+    this._sim.setSimOptions({
+      runSimulations: false,
+      time: { hour: 0, minute: 0 }
+    });
+
+    this._sim.currentOptions.subscribe(res => {
+      console.log(res);
+      if (res['runSimulations']) { this.runSimulations(); }
+    });
 
     //Initiate user status (if user is admin or not)
     this._auth.currentToken.subscribe(res => {
