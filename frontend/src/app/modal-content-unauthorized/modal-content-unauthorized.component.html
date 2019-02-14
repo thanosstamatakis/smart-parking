@@ -51,14 +51,14 @@
 <div class="container d-flex justify-content-center" id="blockData">
   <div class="row">
     <div class="col-md" style="width:15em;">
-      <h5 class="text-center">Modify Time</h5>
+      <h5 class="text-center">Set Time</h5>
       <hr>
       <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
     </div>
     <div class="col-md" id="rightCol">
-      <h5 class="text-center">Modify Demand</h5>
+      <h5 class="text-center">Distance to Walk</h5>
       <hr>
-      <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{liveDemand}}"
+      <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{walkingDistance}}"
         (input)="setValue($event.target)" min="0" max="100">
     </div>
   </div>

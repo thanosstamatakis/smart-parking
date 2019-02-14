@@ -26,6 +26,7 @@ export class ModalContentUnauthorizedComponent implements OnInit {
   blockPopulation: number;
   blockCentroid: String;
   liveDemand: number = null;
+  walkingDistance: number = null;
   labels: String[] = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
     '08:00', '09:00', '10:00', '11:00', ' 12:00', '13:00', '14:00', '15:00',
     '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
@@ -39,7 +40,7 @@ export class ModalContentUnauthorizedComponent implements OnInit {
 
   setValue(event) {
     console.log(event['valueAsNumber']);
-    this.liveDemand = event['valueAsNumber'];
+    this.walkingDistance = event['valueAsNumber'];
   }
 
   timePickerInput(event) {
@@ -91,10 +92,22 @@ export class ModalContentUnauthorizedComponent implements OnInit {
     return demand;
   }
 
+  getLongsLats(centroid) {
+    let longLats: Object = null;
+    centroid = centroid.replace(/[()]/g, '');
+    centroid = centroid.split(" ");
+    longLats = {
+      long: centroid[1],
+      lat: centroid[0]
+    };
+    return longLats;
+  }
+
   closeAndSubmit() {
     this._sim.setSimOptions({
       runSimulations: true,
-      time: this.time
+      time: this.time,
+      coords: this.getLongsLats(this.polygonSpecs.centroid)
     });
     this.activeModal.close('Close click')
   }
@@ -103,13 +116,13 @@ export class ModalContentUnauthorizedComponent implements OnInit {
   constructor(public activeModal: NgbActiveModal, private _data: DataService, private _sim: SimulationService) { }
 
   async ngOnInit() {
-
     var demand = await this.getDemand(this.polygonSpecs.id);
     var dataPoints = demand['demand'];
     var dataPointsFixed = demand['fixed_demand'];
     var blockPopulation = this.polygonSpecs.population;
 
-    this.liveDemand = parseFloat((100 * dataPoints[0]).toFixed(1));
+    this.liveDemand = parseFloat((parseFloat(dataPoints[0]) * 100).toFixed(2));
+    this.walkingDistance = 15;
     this.demand = demand['demand'];
     this.displayTime.toLocaleTimeString();
     this.blockPopulation = blockPopulation;

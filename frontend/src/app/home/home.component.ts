@@ -191,6 +191,7 @@ export class HomeComponent implements OnInit {
             }
 
             theModalData.componentInstance.polygonSpecs = polygonSpecs;
+            console.log(polygonToAdd);
 
           });
         }
