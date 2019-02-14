@@ -117,11 +117,11 @@ export class ModalContentUnauthorizedComponent implements OnInit {
       type: 'line',
       data: {
         labels: this.labels,
-        bezierCurve: false,
         datasets: [{
           label: 'Demand',
           data: dataPoints,
-          borderColor: "#007bff"
+          borderColor: "#007bff",
+          lineTension: 0.000000001
         }, {
           label: 'Fixed Demand',
           data: dataPointsFixed,
