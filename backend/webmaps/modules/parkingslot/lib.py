@@ -7,6 +7,7 @@ import random
 from math import sqrt
 # Project files.
 from config import CONFIGURATION
+from webmaps.utils import demand
 from webmaps.models.slots_cluster import ParkingSlotsCluster
 from webmaps.utils.general_sanitizations import point_sanitization
 
@@ -98,7 +99,7 @@ def check_if_cluster_is_close(centroid, user_location, radius):
 def _get_available_parking_slots(parking_slots, time, redis_key):
     """ Get available parking slots for specific block. """
     parking_slots = int(parking_slots)
-    time = int(round(float(time)))
+    time = float(time)
     # Get from db Population, fixed and normal demand.
     # Remove redis_key slots ending.
     redis_key = ":".join((redis_key.split(':')[:-2]))
@@ -106,13 +107,12 @@ def _get_available_parking_slots(parking_slots, time, redis_key):
     redis_key = ":".join((redis_key, 'polygon'))
     fixed_demand = float(redis_conn.lrange(
         f'{redis_key}:fixed_demand', 0, 0)[0])
-    real_demand = float(redis_conn.lrange(
-        f'{redis_key}:demand', time-1, time-1)[0])
+    real_demand = demand.get_simulation_demand(time, redis_key)
     # Available parking slots are parking slots -
     # fixed demand * population + remaining * normal demand.
     fixed_demand_parking_slots = fixed_demand * population
-    parking_slots = int(round(parking_slots - fixed_demand_parking_slots + \
-        (parking_slots - fixed_demand_parking_slots) * real_demand))
+    parking_slots = int(round(parking_slots - fixed_demand_parking_slots +
+                              (parking_slots - fixed_demand_parking_slots) * real_demand))
     # Check if parking slots are bellow 0.
     parking_slots = 0 if parking_slots < 0 else parking_slots
     LOGGER.debug(f'Time: {time}, Fixed demand: {fixed_demand}, \

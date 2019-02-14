@@ -8,7 +8,7 @@ from abc import ABC, abstractclassmethod
 # Project files.
 from config import CONFIGURATION
 from webmaps.models.webmap import Polygon
-from webmaps.utils import generate_demand
+from webmaps.utils import demand
 
 LOGGER = CONFIGURATION.get_logger(__name__)
 PROJECT_PATH = os.path.dirname(os.path.abspath('smart-parking'))
@@ -86,7 +86,7 @@ class KmlParser(FileParser):
                 center[1] += 0
                 center[0] += 0
             mark = Polygon(placemark.name, population,
-                           placemark.geometry, generate_demand.generate_demand())
+                           placemark.geometry, demand.generate_demand())
             mark.save_to_db()
         for index, _ in enumerate(center):
             center[index] /= len(placemarks)
