@@ -110,9 +110,33 @@ export class HomeComponent implements OnInit {
     polygonLayer.addTo(cityMap);
   }
 
-  runSimulation(cityMap: L.Map, polygonLayer: L.FeatureGroup, time) {
-    // this.removePolygons(cityMap, polygonLayer);
-    this.refreshPolygons(cityMap, polygonLayer, time);
+  runSimulation(cityMap: L.Map, polygonLayer: L.FeatureGroup, input: Object) {
+    this.refreshPolygons(cityMap, polygonLayer, input['time']);
+    input['time'] = this.formatCurrentTime(input['time']);
+    console.log(input);
+    var centroid = [input['coords']['long'], input['coords']['lat']];
+    console.log(centroid);
+
+    L.circle([input['coords']['long'], input['coords']['lat']], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: input['walkingDistance']
+    }).addTo(cityMap);
+
+    this._data.getParkingSlot(input).subscribe(res => {
+      console.log(res);
+      L.marker(res[0]['centroid']).addTo(cityMap);
+
+      L.polyline([centroid, res[0]['centroid']], {
+        color: 'red',
+        weight: 3,
+        opacity: 0.5,
+        smoothFactor: 1
+
+      }).addTo(cityMap);
+
+    })
   }
 
   async ngOnInit() {
@@ -132,7 +156,7 @@ export class HomeComponent implements OnInit {
 
       // Subscribe to the global current options from the simulation service
       this._sim.currentOptions.subscribe(res => {
-        if (res['runSimulations']) { this.runSimulation(cityMap, polygonLayer, res['time']); }
+        if (res['runSimulations']) { this.runSimulation(cityMap, polygonLayer, res); }
       });
 
 

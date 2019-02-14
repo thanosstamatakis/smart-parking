@@ -4,6 +4,7 @@ import { Chart } from 'chart.js';
 import { polygon } from 'leaflet';
 import { DataService } from '../data.service';
 import { SimulationService } from '../simulation.service';
+import { BlockingProxy } from 'blocking-proxy';
 
 @Component({
   selector: 'app-modal-content-unauthorized',
@@ -107,7 +108,8 @@ export class ModalContentUnauthorizedComponent implements OnInit {
     this._sim.setSimOptions({
       runSimulations: true,
       time: this.time,
-      coords: this.getLongsLats(this.polygonSpecs.centroid)
+      coords: this.getLongsLats(this.polygonSpecs.centroid),
+      walkingDistance: this.walkingDistance
     });
     this.activeModal.close('Close click')
   }
