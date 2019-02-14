@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import * as L from 'leaflet';
 import { DataService } from '../data.service';
-import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgbActiveModal, NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ModalContentComponent } from '../modal-content/modal-content.component';
 import { ModalContentUnauthorizedComponent } from '../modal-content-unauthorized/modal-content-unauthorized.component';
 import { AuthService } from '../auth.service';
+import { SimulationService } from '../simulation.service';
 
 
 @Component({
@@ -20,9 +21,10 @@ export class HomeComponent implements OnInit {
   visibleModal: Boolean = false;
   modalReference: Object = this._modalService;
   isAdmin: Boolean = this._auth.getUserData()['isAdmin'];
+  polygonLayer: L.FeatureGroup;
 
 
-  constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService) { }
+  constructor(private _data: DataService, private _modalService: NgbModal, private _auth: AuthService, private _sim: SimulationService) { }
 
 
 
@@ -76,6 +78,10 @@ export class HomeComponent implements OnInit {
     return formatedTime;
   }
 
+  formatCurrentTime(time: Object) {
+    return time['hour'] + 0.01 * time['minute'];
+  }
+
   createMap(mapName: string) {
     let cityMap = L.map('cityMap', {
       zoomControl: false
@@ -95,53 +101,109 @@ export class HomeComponent implements OnInit {
     return colors;
   }
 
+  async refreshPolygons(cityMap: L.Map, polygonLayer: L.FeatureGroup, time) {
+    var colors = await this.getInitColors(this.formatCurrentTime(time));
+    for (var itteration in polygonLayer['_layers']) {
+      polygonLayer['_layers'][itteration]['options']['fillColor'] = colors[polygonLayer['_layers'][itteration]['polygonNumber']];
+    }
+    cityMap.removeLayer(polygonLayer);
+    polygonLayer.addTo(cityMap);
+  }
+
+  runSimulation(cityMap: L.Map, polygonLayer: L.FeatureGroup, input: Object) {
+    this.refreshPolygons(cityMap, polygonLayer, input['time']);
+    input['time'] = this.formatCurrentTime(input['time']);
+    console.log(input);
+    var centroid = [input['coords']['long'], input['coords']['lat']];
+    console.log(centroid);
+
+    L.circle([input['coords']['long'], input['coords']['lat']], {
+      color: 'red',
+      fillColor: '#f03',
+      fillOpacity: 0.5,
+      radius: input['walkingDistance']
+    }).addTo(cityMap);
+
+    this._data.getParkingSlot(input).subscribe(res => {
+      console.log(res);
+      L.marker(res[0]['centroid']).addTo(cityMap);
+
+      L.polyline([centroid, res[0]['centroid']], {
+        color: 'red',
+        weight: 3,
+        opacity: 0.5,
+        smoothFactor: 1
+
+      }).addTo(cityMap);
+
+    })
+  }
+
   async ngOnInit() {
     var colors = await this.getInitColors(this.getCurrentTime());
 
-    console.log(colors[1]);
-
-    //Initiate user status (if user is admin or not)
-    this._auth.currentToken.subscribe(res => {
-      this.isAdmin = res['isAdmin'];
-    });
-
-    // Create map and add to viewport
-    const cityMap = this.createMap('cityMap');
-
-    // Add tile layer to map
-    this.addTileLayer(cityMap);
-
-    // Get the bootstrap _modalService 
-    var theModalRef = this._modalService;
-
+    // Fetch polygons from api through the data service
     this._data.getPolygons().subscribe(data => {
       this.apiData = data;
 
-      var polygon;
-      var polygonLayer;
 
-      for (var individual in this.apiData) {
+      // Initialize simulation options globally
+      this._sim.setSimOptions({
+        runSimulations: false,
+        time: { hour: 0, minute: 0 }
+      });
+
+
+      // Subscribe to the global current options from the simulation service
+      this._sim.currentOptions.subscribe(res => {
+        if (res['runSimulations']) { this.runSimulation(cityMap, polygonLayer, res); }
+      });
+
+
+      //Initiate user status (if user is admin or not)
+      this._auth.currentToken.subscribe(res => {
+        this.isAdmin = res['isAdmin'];
+      });
+
+
+      // Create map and add to viewport
+      const cityMap = this.createMap('cityMap');
+
+
+      // Add tile layer to map
+      this.addTileLayer(cityMap);
+
+
+      // Get the bootstrap _modalService 
+      var theModalRef = this._modalService;
+      var polygon;
+      var polygonToAdd;
+      var polygonLayer = new L.FeatureGroup();
+
+      for (var itteration in this.apiData) {
         //declarations inside the loop
-        let polygonSpecs = (this.apiData[individual]);
+        let polygonSpecs = (this.apiData[itteration]);
+        polygonSpecs['id'] = parseInt(itteration);
 
 
         //Get polygon data that was received through the service, sanitize the data so it is readable from leaflet functions
-        this.apiData[individual].polygon = this.sanitizeCoords(this.apiData[individual].polygon, this.insertToString);
-        polygon = JSON.parse(this.apiData[individual].polygon);
+        this.apiData[itteration].polygon = this.sanitizeCoords(this.apiData[itteration].polygon, this.insertToString);
+        polygon = JSON.parse(this.apiData[itteration].polygon);
 
 
         //Check if a block has polygon data and draw it
         if (polygon[0] != 0) {
-          polygonLayer = L.polygon(polygon, { fillColor: colors[individual], stroke: false, fillOpacity: 0.18 });
-          polygonLayer['polygonSpecs'] = polygonSpecs;
-          polygonLayer['polygonNumber'] = parseInt(individual);
-          polygonLayer.addTo(cityMap);
+          polygonToAdd = L.polygon(polygon, { fillColor: colors[itteration], stroke: false, fillOpacity: 0.18 });
+          polygonToAdd['polygonSpecs'] = polygonSpecs;
+          polygonToAdd['polygonNumber'] = parseInt(itteration);
+          polygonToAdd.addTo(polygonLayer);
 
 
-          //Define action for click on an individual polygon
-          polygonLayer.on('click', function (event) {
-
+          //Define action for click on an itteration polygon
+          polygonToAdd.on('click', event => {
+            let polygonNumber = event.target.polygonNumber;
             let polygonSpecs = event.target.polygonSpecs;
+
             if (this.isAdmin) {
               var theModalData = theModalRef.open(ModalContentComponent, {
                 size: 'lg'
@@ -150,14 +212,15 @@ export class HomeComponent implements OnInit {
               var theModalData = theModalRef.open(ModalContentUnauthorizedComponent, {
                 size: 'lg'
               });
-              console.log(colors);
             }
+
             theModalData.componentInstance.polygonSpecs = polygonSpecs;
+            console.log(polygonToAdd);
+
           });
         }
-
-
       }
+      polygonLayer.addTo(cityMap);
     });
   }
 

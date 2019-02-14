@@ -16,6 +16,15 @@ export class DataService {
     return this._http.get('http://localhost:8080/api/placemark/all');
   }
 
+  getParkingSlot(input: Object) {
+    let params = new HttpParams()
+      .set('longitude', input['coords']['long'])
+      .set('latitude', input['coords']['lat'])
+      .set('radius', input['walkingDistance'])
+      .set('time', input['time'])
+    return this._http.get('http://localhost:8080/api/parking-slot/', { params: params })
+  }
+
   async getColors(time: number) {
     let params = new HttpParams()
       .set('time', time.toString());
@@ -47,6 +56,12 @@ export class DataService {
         reportProgress: true,
         observe: 'events'
       });
+  }
+
+  async getPolygonDemand(polygonId) {
+    let demandPromise = await this._http.get('http://localhost:8080/api/placemark/demand/' + polygonId).toPromise();
+    let demand = Promise.resolve(demandPromise);
+    return demand;
   }
 
 
