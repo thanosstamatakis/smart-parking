@@ -32,6 +32,7 @@ def get_simulation_demand(simulation_time, redis_key):
         demands.append(float(redis_conn.lrange(
             f'{redis_key}:demand', int(time)-1, int(time)-1)[0]))
     coefficients = np.polyfit(simulation_period, demands, 1)
+    # Create the polynomial equation
     polynomial = np.poly1d(coefficients)
 
-    return polynomial(simulation_time)
+    return polynomial(polynomial(simulation_time))

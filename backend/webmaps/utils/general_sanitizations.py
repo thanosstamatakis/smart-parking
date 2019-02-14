@@ -10,12 +10,13 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 
 def point_sanitization(point):
     """ Sanitize point from MultiGeo format to list """
-    LOGGER.debug(f'POINT SANI: {point}')
+    # Remove reduntant parenthesis.
     point = str(point).translate(
         str.maketrans({'(': '', ')': ''})).split(' ')[0:]
     if 'POINT'in point:
         point.remove('POINT')
         return point
+    # Correct the list format
     point[0], point[1] = point[1], point[0]
 
     return point
@@ -23,6 +24,7 @@ def point_sanitization(point):
 
 def polygon_sanitization(coordinates):
     """ Sanitize polygon string into list of point lists. """
+    # Regex for exrtacting points from polygon string.
     points_in_polygon_reg = re.compile(r'(\d+\.?\d*\ \d+\.?\d*)')
     polygon = coordinates.strip('()')
     coords = list()
