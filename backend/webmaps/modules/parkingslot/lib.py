@@ -22,11 +22,11 @@ LOGGER = CONFIGURATION.get_logger(__name__)
 
 def get_clusters(user_location, radius, time):
     """ Return all clusters """
-    close_clusters = get_close_clusters(user_location, radius)
-    LOGGER.debug(f'CLOSE CLUSTERS: {len(close_clusters)}')
-    parking_slots = get_parking_slots(close_clusters, time)
-    slots = [x for x in parking_slots.values()]
-    LOGGER.debug(f'PARKING SLOTS: {len(slots)}')
+    close_centroids = get_close_centroids(user_location, radius)
+    LOGGER.debug(f'CLOSE CLUSTERS: {len(close_centroids)}')
+    parking_slots = get_parking_slots(close_centroids, time)
+
+    slots = list(parking_slots.values())[0]
     if not slots:
         return slots
     slots = np.array(slots)
@@ -38,26 +38,29 @@ def get_clusters(user_location, radius, time):
 
 def get_parking_slots(clusters, time):
     """ Return the parking slots of the cluster in long and lat format """
-    cluster_parking_slots = dict()
+    blocks_parking_slots = dict()
 
     for placemark_id, cluster in clusters.items():
         redis_key = ":".join(('placemark', placemark_id, 'polygon', 'slots'))
         parking_slots = redis_conn.get(redis_key)
         parking_slots = _get_available_parking_slots(parking_slots, time,
                                                      redis_key)
-        distance_from_centroid = get_distance_from_centroid()
+        parking_slots_in_cluster = list()
         for parking_slot in range(parking_slots):
-            cluster_parking_slots[placemark_id] = [
-                float(cluster[0]) + distance_from_centroid,
-                float(cluster[1]) + distance_from_centroid
-            ]
+            distance_from_centroid = get_distance_from_centroid()
+            
+            parking_slots_in_cluster.append([float(cluster[0]) + distance_from_centroid,
+                float(cluster[1]) + distance_from_centroid])
 
-    return cluster_parking_slots
+        blocks_parking_slots[placemark_id] = parking_slots_in_cluster
+        LOGGER.debug(f'BLOCK: {placemark_id}, num of slots: {len(parking_slots_in_cluster)}')
+    # LOGGER.debug(f'CLUSTERS PS: {blocks_parking_slots}')
+    return blocks_parking_slots
 
 
 def get_distance_from_centroid():
     """ Return the distance from centroid. """
-    distance_from_centroid = random.randint(1, 50) * 0.0000089
+    distance_from_centroid = random.randint(1, 50) * 0.00000089
     # If random number >= 0.5 then true.
     if random.random() >= 0.5:
         return -distance_from_centroid
@@ -65,8 +68,8 @@ def get_distance_from_centroid():
     return distance_from_centroid
 
 
-def get_close_clusters(user_location, radius):
-    """ Return centroids of clusters in database  inside area. """
+def get_close_centroids(user_location, radius):
+    """ Return centroids of polygons in database inside area. """
     redis_key = 'placemark'
     clusters = dict()
     placemark_ids = redis_conn.smembers(redis_key)
@@ -88,22 +91,23 @@ def check_if_cluster_is_close(centroid, user_location, radius):
     inside radius.
     """
     R = 6373.0
+    # Python fucntion use radians, not degrees.
     lat1 = radians(float(centroid[0]))
     lon1 = radians(float(centroid[1]))
     lat2 = radians(float(user_location[1]))
     lon2 = radians(float(user_location[0]))
-
+    # Get distance in radias in longiture and latitude
     dlon = lon2 - lon1
     dlat = lat2 - lat1
 
     a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
     c = 2 * atan2(sqrt(a), sqrt(1 - a))
-
-    distance = R * c
-
-    LOGGER.debug(f'LAT-LON: {centroid[0]}{lat1}|{lon1} USER: {lat2}|{lon2} dist:{distance}')
+    # Distance in km transofrmed to meters.
+    distance = R * c * 1000
+    # LOGGER.debug(f'LAT-LON: {centroid[0]}{lat1}|{lon1} USER: {lat2}|{lon2} dist:{distance}')
     # distance = sqrt(lang_diff ** 2 + long_diff ** 2)
-    if (1000*distance < float(radius)):
+    if (distance < float(radius)):
+        LOGGER.debug(f'Distance: {distance}, radius: {radius}, Cluster: {centroid}')
         return True
 
     return False

@@ -113,7 +113,7 @@ def get_demand_per_block(time_of_simulation):
     """
     # Round time.
     time_of_simulation = int(round(float(time_of_simulation)))
-    availability_per_block = dict()
+    demand_per_block = dict()
     placemarks = redis_conn.smembers('placemark')
     for placemark in placemarks:
         # Get block's population.
@@ -134,22 +134,22 @@ def get_demand_per_block(time_of_simulation):
             (parking_slots - fixed_demand_parking_slots) * real_demand
         # Return the percentage of demandin parking slots.
         try:
-            availability_per_block[placemark] = demanding_slots/parking_slots
+            demand_per_block[placemark] = demanding_slots/parking_slots
         except ZeroDivisionError:
-            availability_per_block[placemark] = 1
+            demand_per_block[placemark] = 1
 
-    return availability_per_block
+    return demand_per_block
 
 
-def map_demand_to_color(availability_per_block):
+def map_demand_to_color(demand_per_block):
     """ Map parkin slot demand of each block to the corresponding color. """
     range_to_color = {0.59: 'green', 0.84: 'yellow', 1: 'red'}
-    for placemark_id, availability in availability_per_block.items():
+    for placemark_id, availability in demand_per_block.items():
         for max_num, color in range_to_color.items():
             # If availability > 1 use 1.
             if min(availability, 1) <= max_num:
-                availability_per_block[placemark_id] = color
+                demand_per_block[placemark_id] = color
                 # LOGGER.debug(f'{placemark_id} {availability} {color}')
                 break
 
-    return availability_per_block
+    return demand_per_block
