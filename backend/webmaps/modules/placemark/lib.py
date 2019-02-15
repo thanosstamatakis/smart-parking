@@ -43,14 +43,14 @@ def get_polygon_attributes():
                 ":".join((redis_key, 'slots')))
         except KeyError:
             polygon_elements['parking_slots'] = 0
-        LOGGER.debug(
-            f'Get from key {redis_key}:slots value {polygon_elements["parking_slots"]}')
+        # LOGGER.debug(
+            # f'Get from key {redis_key}:slots value {polygon_elements["parking_slots"]}')
         # Get demands.
         for polygon_attr in set(polygon_attrs) - {'slots'}:
             temp_key = ":".join((redis_key, str(polygon_attr)))
             polygon_elements[polygon_attr] = redis_conn.lrange(temp_key, 0, -1)
-            LOGGER.debug(
-                f'Get from key {temp_key} value {polygon_elements[polygon_attr]}')
+            # LOGGER.debug(
+            # f'Get from key {temp_key} value {polygon_elements[polygon_attr]}')
 
         response[placemark_id] = [polygon_elements]
 
@@ -78,8 +78,8 @@ def update_demand(placemark_id, demand_per_hour):
     try:
         for time, demand in demand_per_hour.items():
             redis_pipe.lset(redis_key, int(time), demand)
-            LOGGER.debug(
-                f'Set to key: {redis_key} at list position: {time} value: {demand}')
+            # LOGGER.debug(
+            # f'Set to key: {redis_key} at list position: {time} value: {demand}')
     except ValueError:
         pass
     # Execute pipe commands.
@@ -107,9 +107,9 @@ def get_demands(placemark_id):
     return demands
 
 
-def get_demanding(time_of_simulation):
+def get_demand_per_block(time_of_simulation):
     """
-    Return the percentage of availability for each block. 
+    Return the percentage of demand for each block.
     """
     # Round time.
     time_of_simulation = int(round(float(time_of_simulation)))
@@ -133,7 +133,10 @@ def get_demanding(time_of_simulation):
         demanding_slots = fixed_demand_parking_slots + \
             (parking_slots - fixed_demand_parking_slots) * real_demand
         # Return the percentage of demandin parking slots.
-        availability_per_block[placemark] = demanding_slots/parking_slots
+        try:
+            availability_per_block[placemark] = demanding_slots/parking_slots
+        except ZeroDivisionError:
+            availability_per_block[placemark] = 1
 
     return availability_per_block
 
@@ -146,7 +149,7 @@ def map_demand_to_color(availability_per_block):
             # If availability > 1 use 1.
             if min(availability, 1) <= max_num:
                 availability_per_block[placemark_id] = color
-                LOGGER.debug(f'{placemark_id} {availability} {color}')
+                # LOGGER.debug(f'{placemark_id} {availability} {color}')
                 break
 
     return availability_per_block
