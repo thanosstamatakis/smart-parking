@@ -122,7 +122,7 @@ class PlacemarkAvailability(Resource):
     def get(self):
         """ Return all placemark colors based on avaialbility. """
         args = flask.request.args
-        availability_per_block = lib.get_demanding(args['time'])
+        availability_per_block = lib.get_demand_per_block(args['time'])
         response = lib.map_demand_to_color(availability_per_block)
 
         return response
