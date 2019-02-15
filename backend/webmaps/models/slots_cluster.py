@@ -48,7 +48,7 @@ class ParkingSlotsCluster():
         clusters = self._find_max_point_cluster(clusters)
 
         for cluster in clusters:
-            LOGGER.debug(f"CLUSTERS: {clusters} CLUSTER: {type(cluster)}")
+            # LOGGER.debug(f"CLUSTERS: {clusters} CLUSTER: {type(cluster)}")
             if len(cluster) > 0:
                 cluster_cent = self._get_clusters_centroid(cluster)
                 cluster_dist = self._get_clusters_distance(cluster_cent)
@@ -78,11 +78,11 @@ class ParkingSlotsCluster():
         """ Get specific cluster's coordinates. """
         # Use Multipoint to get cluster
         centroid = MultiPoint(cluster).centroid
-        LOGGER.debug(f"CENTROID PASSED: {centroid}")
+        # LOGGER.debug(f"CENTROID PASSED: {centroid}")
         # Sanitize format of centroid
         centroid = point_sanitization(centroid)
         # Further formating.
-        LOGGER.debug(f"CENTROID PASSED: {centroid}")
+        # LOGGER.debug(f"CENTROID PASSED: {centroid}")
         centroid = self._sanitize_lists_numbers(centroid)
 
         return centroid
@@ -99,7 +99,6 @@ class ParkingSlotsCluster():
     def _sanitize_lists_numbers(list_to_sanitize):
         """ Limit lists floats to 2 decimals and return. """
         for index, number in enumerate(list_to_sanitize):
-            LOGGER.debug(f"LIST TO SANITIZE: {list_to_sanitize}")
             # list_to_sanitize[index] = float("%.2f" % round(float(number), 2))
             list_to_sanitize[index] = float(number)
 

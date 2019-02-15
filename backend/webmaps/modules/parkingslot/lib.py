@@ -4,7 +4,7 @@ import redis
 import logging
 import numpy as np
 import random
-from math import sqrt
+from math import sin, cos, sqrt, atan2, radians
 # Project files.
 from config import CONFIGURATION
 from webmaps.utils import demand
@@ -26,7 +26,7 @@ def get_clusters(user_location, radius, time):
     LOGGER.debug(f'CLOSE CLUSTERS: {len(close_clusters)}')
     parking_slots = get_parking_slots(close_clusters, time)
     slots = [x for x in parking_slots.values()]
-    LOGGER.debug(f'PARKING SLOTS: {slots}')
+    LOGGER.debug(f'PARKING SLOTS: {len(slots)}')
     if not slots:
         return slots
     slots = np.array(slots)
@@ -87,10 +87,23 @@ def check_if_cluster_is_close(centroid, user_location, radius):
     Check if cluster's distance and users desired location are
     inside radius.
     """
-    lang_diff = float(centroid[0]) - float(user_location[0])
-    long_diff = float(centroid[1]) - float(user_location[1])
-    distance = sqrt(lang_diff ** 2 + long_diff ** 2)
-    if (distance < float(radius)):
+    R = 6373.0
+    lat1 = radians(float(centroid[0]))
+    lon1 = radians(float(centroid[1]))
+    lat2 = radians(float(user_location[1]))
+    lon2 = radians(float(user_location[0]))
+
+    dlon = lon2 - lon1
+    dlat = lat2 - lat1
+
+    a = sin(dlat / 2)**2 + cos(lat1) * cos(lat2) * sin(dlon / 2)**2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = R * c
+
+    LOGGER.debug(f'LAT-LON: {centroid[0]}{lat1}|{lon1} USER: {lat2}|{lon2} dist:{distance}')
+    # distance = sqrt(lang_diff ** 2 + long_diff ** 2)
+    if (1000*distance < float(radius)):
         return True
 
     return False
@@ -115,7 +128,7 @@ def _get_available_parking_slots(parking_slots, time, redis_key):
                               (parking_slots - fixed_demand_parking_slots) * real_demand))
     # Check if parking slots are bellow 0.
     parking_slots = 0 if parking_slots < 0 else parking_slots
-    LOGGER.debug(f'Time: {time}, Fixed demand: {fixed_demand}, \
-    Norm: {real_demand}, Parking SLOTS: {parking_slots}')
+    # LOGGER.debug(f'Time: {time}, Fixed demand: {fixed_demand}, \
+    # Norm: {real_demand}, Parking SLOTS: {parking_slots}')
 
     return parking_slots
