@@ -104,6 +104,34 @@ export class AuthService {
     this.getUserData();
   }
 
+  //method that checks if a token has been tampered with
+  async checkToken(){
+    let userData: object;
+    if (localStorage.getItem('token')==null){
+      return false;
+    }else {
+      userData = this.getUserData();
+      console.log(userData);
+      let token = localStorage.getItem('token');
+      let type: string = '';
+      if (userData['isAdmin'] == true){
+        type = 'admin';
+      }else{
+        type = 'normal';
+      }
+      let params = new HttpParams()
+      .set('token',token.substring(1, token.length - 1))
+      .set('type',type)
+      .set('username',userData['username']);
+  
+      let authPromise = await this._http.get('http://localhost:8080/api/user/validation/token',{params: params}).toPromise()
+      let auth = Promise.resolve(authPromise);
+
+      return auth;
+    }
+
+  }
+
   //method that logs in the user with the given body from the form
   loginUser(body) {
     let params = new HttpParams()
