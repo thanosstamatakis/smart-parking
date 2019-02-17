@@ -28,7 +28,7 @@ class Validation(Resource):
     """
     @NAMESPACE.expect(user_model)
     def get(self):
-        """ Get function for checking user credentials. """
+        """ Validate user credentials. """
         args = request.args
         response = dict.fromkeys(['Message', 'Token'])
         LOGGER.debug(response)
@@ -47,6 +47,35 @@ class Validation(Resource):
             response = {'Message': VALIDATION_NAMESPACE.USER_EXISTS,
                         'Token': token.decode('utf-8')}
         return response
+
+
+@NAMESPACE.route('/validation/token')
+class Validation(Resource):
+    """
+    Api class for token validation.
+    """
+    @NAMESPACE.param('username', 'Username of user')
+    @NAMESPACE.param('type', 'Type of user')
+    @NAMESPACE.param('token', 'Token to validate.')
+    def get(self):
+        """ Validate user token. """
+        args = request.args
+        try:
+            user_type = str(args['type'])
+            user_name = str(args['username'])
+            user_token = str(args['token'])
+        except AttributeError:
+            return VALIDATION_NAMESPACE.VALIDATION_ERROR
+        # Response
+        try:
+            token_info = jwt.decode(
+                user_token, APP.secret_key, algorithms=['HS256'])
+        except (jwt.InvalidAlgorithmError, jwt.DecodeError):
+            return False
+        if token_info == {'type': user_type, 'username': user_name}:
+            return True
+
+        return False
 
 
 @NAMESPACE.route('/adduser')
