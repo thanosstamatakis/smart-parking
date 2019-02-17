@@ -48,12 +48,13 @@ def get_parking_slots(clusters, time):
         parking_slots_in_cluster = list()
         for parking_slot in range(parking_slots):
             distance_from_centroid = get_distance_from_centroid()
-            
+
             parking_slots_in_cluster.append([float(cluster[0]) + distance_from_centroid,
-                float(cluster[1]) + distance_from_centroid])
+                                             float(cluster[1]) + distance_from_centroid])
 
         blocks_parking_slots[placemark_id] = parking_slots_in_cluster
-        LOGGER.debug(f'BLOCK: {placemark_id}, num of slots: {len(parking_slots_in_cluster)}')
+        LOGGER.debug(
+            f'BLOCK: {placemark_id}, num of slots: {len(parking_slots_in_cluster)}\n\n\n')
     # LOGGER.debug(f'CLUSTERS PS: {blocks_parking_slots}')
     return blocks_parking_slots
 
@@ -107,7 +108,8 @@ def check_if_cluster_is_close(centroid, user_location, radius):
     # LOGGER.debug(f'LAT-LON: {centroid[0]}{lat1}|{lon1} USER: {lat2}|{lon2} dist:{distance}')
     # distance = sqrt(lang_diff ** 2 + long_diff ** 2)
     if (distance < float(radius)):
-        LOGGER.debug(f'Distance: {distance}, radius: {radius}, Cluster: {centroid}')
+        LOGGER.debug(
+            f'Distance: {distance}, radius: {radius}, Cluster: {centroid}')
         return True
 
     return False
@@ -122,17 +124,32 @@ def _get_available_parking_slots(parking_slots, time, redis_key):
     redis_key = ":".join((redis_key.split(':')[:-2]))
     population = int(redis_conn.hget(redis_key, 'population'))
     redis_key = ":".join((redis_key, 'polygon'))
+    # Get fixed demand.
     fixed_demand = float(redis_conn.lrange(
         f'{redis_key}:fixed_demand', 0, 0)[0])
+    # Get real demand.
     real_demand = demand.get_simulation_demand(time, redis_key)
-    # Available parking slots are parking slots -
-    # fixed demand * population + remaining * normal demand.
-    fixed_demand_parking_slots = fixed_demand * population
-    parking_slots = int(round(parking_slots - fixed_demand_parking_slots +
-                              (parking_slots - fixed_demand_parking_slots) * real_demand))
-    # Check if parking slots are bellow 0.
-    parking_slots = 0 if parking_slots < 0 else parking_slots
-    # LOGGER.debug(f'Time: {time}, Fixed demand: {fixed_demand}, \
-    # Norm: {real_demand}, Parking SLOTS: {parking_slots}')
 
-    return parking_slots
+    # Available parking slots are parking slots -
+    # fixed demand * population + remaining * normal demand
+    # and are computed bellow.
+    LOGGER.debug(f'PARKING SLOTS: {parking_slots}')
+    # Number of Parking slots occupied by civilians with parking slot cards.
+    fixed_demand_parking_slots = fixed_demand * population
+    LOGGER.debug(f'FIXED DEMAND PS: {fixed_demand_parking_slots}')
+    # Number of Parking slots remaining without fixed.
+    remaining_parking_slots = parking_slots - fixed_demand_parking_slots
+    LOGGER.debug(f'REMAINING PS: {remaining_parking_slots}')
+    # Number of Parking slots occupied by people based on demand at the time.
+    real_demand_parking_slots = remaining_parking_slots * real_demand
+    LOGGER.debug(f'REAL DEMAND PS: {real_demand_parking_slots}')
+    # Available parking slots = All - Real demand - Fixed.
+    available_parking_slots = int(round(parking_slots -
+                                        real_demand_parking_slots - fixed_demand_parking_slots))
+    LOGGER.debug(f'AVAILABLE PS: {available_parking_slots}')
+    # Check if parking slots are bellow 0 or more than the parking slots.
+    available_parking_slots = 0 if available_parking_slots < 0 else available_parking_slots
+    available_parking_slots = parking_slots if int(
+        available_parking_slots) > int(parking_slots) else available_parking_slots
+
+    return available_parking_slots

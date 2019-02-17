@@ -26,7 +26,7 @@ class ParkingSlotsCluster():
         return clustering.
         """
         # Get DBSCAN model.
-        model = DBSCAN(eps=0.0002, min_samples=2)
+        model = DBSCAN(eps=0.00001, min_samples=2)
         # Get clustering from DB scan model.
         clustering = model.fit(self.parking_slots)
 
