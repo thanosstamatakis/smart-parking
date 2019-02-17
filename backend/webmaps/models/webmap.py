@@ -134,7 +134,7 @@ class Polygon(Placemark):
 
     def _get_parking_slots(self):
         """ Return parking slots based on polygons area. """
-        ps_factor = 300000000
+        ps_factor = 30000000
         if self.coordinates['polygon']:
             polygon_area = self._get_polygon_area(
                 self, self.coordinates['polygon'])
