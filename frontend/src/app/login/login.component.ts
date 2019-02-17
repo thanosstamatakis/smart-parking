@@ -26,13 +26,20 @@ export class LoginComponent {
   }
 
   callLoginUser(post) {
+    var type: String = '';
+    if (post.username == 'admin'){
+      type = 'admin';
+    }else{
+      type = 'normal'
+    }
     let body = {
-      type: 'normal',
+      type: type,
       username: post.username,
       password: post.password
     }
 
     this._auth.loginUser(body).subscribe(res => {
+      console.log(res);
       this._auth.storeToken(res);
       this._auth.getUserData();
       this._router.navigate(['']);

@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit {
   }
 
   addTileLayer(mapName: L.Map) {
-    L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    L.tileLayer('https://maps.tilehosting.com/styles/streets/{z}/{x}/{y}@2x.png?key=WrAAiaeTXNk0j6VhIjR3', {
       attribution: null,
     }).addTo(mapName);
   }
@@ -118,24 +118,27 @@ export class HomeComponent implements OnInit {
     console.log(centroid);
 
     L.circle([input['coords']['long'], input['coords']['lat']], {
-      color: 'red',
-      fillColor: '#f03',
-      fillOpacity: 0.5,
+      color: 'none',
+      fillColor: '#007bff',
+      fillOpacity: 0.22,
       radius: input['walkingDistance']
     }).addTo(cityMap);
 
     this._data.getParkingSlot(input).subscribe(res => {
-      console.log(res);
-      L.marker(res[0]['centroid']).addTo(cityMap);
+      if (res[0]){
+        console.log(res);
+        L.marker(res[0]['centroid']).addTo(cityMap);
 
-      L.polyline([centroid, res[0]['centroid']], {
-        color: 'red',
-        weight: 3,
-        opacity: 0.5,
-        smoothFactor: 1
+        L.polyline([centroid, res[0]['centroid']], {
+          color: 'red',
+          weight: 3,
+          opacity: 0.5,
+          smoothFactor: 1
 
-      }).addTo(cityMap);
-
+        }).addTo(cityMap);
+    }else{
+      console.log('No space found in that range.')
+    }
     })
   }
 

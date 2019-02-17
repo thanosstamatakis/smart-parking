@@ -1,17 +1,76 @@
+@import url('https://fonts.googleapis.com/css?family=Comfortaa:300|Concert+One|Fredoka+One|Poiret+One|Work+Sans');
+
 canvas{ 
     width: 100% !important;
     max-width: 800px;
     height: auto !important;
 }
 
-// #blockData {
-//     margin-left: 1em;
-//     margin-right: 1em;
-// }
+
+.card-body {
+    position: relative;
+    text-align: center;
+    height: 2em;
+    color: white;
+}
+
+#blockData {
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+#submitDemand {
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+.modal-footer {
+    margin-top: 1em;
+}
+
+img {
+    margin-top: auto;
+    margin-bottom: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+     width: 7em;
+     height: 7em;
+}
+
+.card:hover {
+    box-shadow: 0 0 11px rgba(33,33,33,.2);
+}
+
+.centered {
+    position: absolute;
+    top: 50%;
+    font-family: 'Work Sans', sans-serif;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #007bff;
+    margin-top: .2em;
+    width:60%;
+    padding:0.4em;
+    border-radius: 2em;
+    box-shadow: 0 0 6px rgba(33,33,33,.2);
+  }
+
+.card {
+    border: none;
+    box-shadow: 0 0 8px rgba(33,33,33,.2);
+    border-radius: .5em;
+    padding: 0;
+    width: 12em;
+    height: 12em;
+    margin-bottom: .5em;
+    transition: box-shadow .3s;
+}
 
 #blockInfo{
     margin-top: 3em;
 }
+
 
 input{
     margin-top: 4em;

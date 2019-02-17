@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { jsonpCallbackContext } from '@angular/common/http/src/module';
 
 
 @Injectable({
@@ -14,6 +15,13 @@ export class DataService {
 
   getPolygons(): Observable<object> {
     return this._http.get('http://localhost:8080/api/placemark/all');
+  }
+
+  patchDemand(id:number, time: number, liveDemand:number) {
+  let body = {}
+  body['demand'] = {[time]:liveDemand/100};
+  console.log(body);
+    return this._http.patch('http://localhost:8080/api/placemark/demand/'+id, body);
   }
 
   getParkingSlot(input: Object) {

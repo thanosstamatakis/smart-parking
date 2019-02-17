@@ -1,7 +1,8 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input,Output } from '@angular/core';
 import { NgbActiveModal, NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { DataService } from '../data.service';
+import { SimulationService } from '../simulation.service';
 import { Chart } from 'chart.js';
-import { compileNgModuleFactory__POST_R3__ } from '@angular/core/src/application_ref';
 
 @Component({
   selector: 'app-modal-content',
@@ -9,44 +10,58 @@ import { compileNgModuleFactory__POST_R3__ } from '@angular/core/src/application
   styleUrls: ['./modal-content.component.scss']
 })
 export class ModalContentComponent implements OnInit {
+  //Get input from parent element
+  @Input() polygonSpecs;
+  @Output() result;
 
-  @Input() blockData;
-
+  //initialization
+  colorButton: string = 'dark';
   chart: any;
-
-  time: Object = {hour: 0, minute: 0};
+  demand: Object = null;
+  time: Object = { hour: 0, minute: 0 };
   displayTime: Date = new Date("T0:0");
-  drawTime: String = (this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'})).toString();
+  drawTime: String = (this.displayTime.toLocaleTimeString(['en-US'], { hour: '2-digit', minute: '2-digit' })).toString();
   value: any = null;
-
   blockPopulation: number;
   blockCentroid: String;
   liveDemand: number = null;
-
-  labels: String[] = ['00:00','01:00','02:00','03:00','04:00','05:00','06:00','07:00',
-                      '08:00','09:00','10:00','11:00',' 12:00','13:00','14:00','15:00',
-                      '16:00','17:00','18:00','19:00','20:00','21:00','22:00','23:00'];
+  walkingDistance: number = null;
+  labels: String[] = ['00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00',
+    '08:00', '09:00', '10:00', '11:00', ' 12:00', '13:00', '14:00', '15:00',
+    '16:00', '17:00', '18:00', '19:00', '20:00', '21:00', '22:00', '23:00'];
 
   timeClick() {
     console.log(this.time);
-    console.log(this.blockData.demand[this.time['hour']]);
-    this.blockData.demand[this.time['hour']] = (this.liveDemand/100).toString();
-    console.log(this.blockData.demand[this.time['hour']]);
+    console.log(this.demand[this.time['hour']]);
+    this.demand[this.time['hour']] = (this.liveDemand / 100).toString();
+    console.log(this.demand[this.time['hour']]);
   }
 
-  setValue (event) {
-    console.log(event['valueAsNumber']);
+  setValue(event) {
     this.liveDemand = event['valueAsNumber'];
   }
 
-  timePickerInput(event){
+  setWalkingDistance(event) {
+    this.walkingDistance = event['valueAsNumber'];
+    console.log(this.walkingDistance);
+  }
+
+  modifyDemand() {
+    console.log('ModifyDemand:')
+    console.log('time:'+ this.time['hour']);
+    this._data.patchDemand(this.polygonSpecs['id'], this.time['hour'],this.liveDemand).subscribe(res=>{
+      this.colorButton = 'success';
+      this.drawChart();
+    }, err=> {
+      console.log(err);
+    });
+  }
+
+  timePickerInput(event) {
     console.log(this.time);
     this.setDisplayTime(this.time);
-    this.setDrawTime(['en-US'], {hour: '2-digit', minute:'2-digit'});
+    this.setDrawTime(['en-US'], { hour: '2-digit', minute: '2-digit' });
     this.setDemand(this.time);
-    console.log(this.liveDemand);
-    console.log(this.displayTime.toLocaleTimeString(['en-US'], {hour: '2-digit', minute:'2-digit'}));
-
   }
 
   // method to set the displayTime date variable hours and minutes (that's all we need) 
@@ -56,7 +71,7 @@ export class ModalContentComponent implements OnInit {
   }
 
   // method to set the locale time to be drawn as a String
-  setDrawTime(locales: string[], options: Object){
+  setDrawTime(locales: string[], options: Object) {
     this.drawTime = (this.displayTime.toLocaleTimeString(locales, options)).toString();
   }
 
@@ -69,58 +84,73 @@ export class ModalContentComponent implements OnInit {
 
     // assign the next hour (for the special case that hour is 23)
 
-    if (hour == 23){
+    if (hour == 23) {
       nextHour = 0;
-    }else{
+    } else {
       nextHour++;
     }
 
     // assign demand as percentage depending on the minutes
 
     if (minute <= 30) {
-      demand = (this.blockData.demand[hour])*100;
-    }else {
-      demand = (this.blockData.demand[nextHour])*100  ;
+      demand = (this.demand[hour]) * 100;
+    } else {
+      demand = (this.demand[nextHour]) * 100;
     }
-    this.liveDemand = demand;
+    this.liveDemand = parseFloat(demand.toFixed(1));
+    console.log(this.liveDemand);
   }
 
-  constructor(public activeModal: NgbActiveModal) {}
+  async getDemand(id) {
+    var demand = await this._data.getPolygonDemand(id);
+    return demand;
+  }
 
-  ngOnInit() { 
+  getLongsLats(centroid) {
+    let longLats: Object = null;
+    centroid = centroid.replace(/[()]/g, '');
+    centroid = centroid.split(" ");
+    longLats = {
+      long: centroid[1],
+      lat: centroid[0]
+    };
+    return longLats;
+  }
 
+  closeAndSubmit() {
+    this._sim.setSimOptions({
+      runSimulations: true,
+      time: this.time,
+      coords: this.getLongsLats(this.polygonSpecs.centroid),
+      walkingDistance: this.walkingDistance
+    });
+    this.activeModal.close('Close click')
+  }
 
-    var blockPopulation = this.blockData.population;
-    var blockCentroid = this.blockData.centroid;
-    var dataPoints = new Array();
-    var dataPointsFixed = new Array();
+  async drawChart() {
+    var demand = await this.getDemand(this.polygonSpecs.id);
+    var dataPoints = demand['demand'];
+    var dataPointsFixed = demand['fixed_demand'];
+    var blockPopulation = this.polygonSpecs.population;
 
-    this.liveDemand = 100*this.blockData.demand[0];
-
+    this.liveDemand = parseFloat((parseFloat(dataPoints[0]) * 100).toFixed(2));
+    this.walkingDistance = 15;
+    this.demand = demand['demand'];
     this.displayTime.toLocaleTimeString();
-    console.log(this.displayTime.toLocaleTimeString());
-
-    for (var individual in this.blockData.demand) {
-      dataPoints.push({'y': this.blockData.demand[individual]});
-      dataPointsFixed.push({'y': this.blockData.fixed_demand[individual]})
-    }
-
     this.blockPopulation = blockPopulation;
-    this.blockCentroid = blockCentroid;
-    
     this.chart = new Chart(document.getElementById('lineChart'), {
       type: 'line',
       data: {
         labels: this.labels,
-        bezierCurve: false,
         datasets: [{
           label: 'Demand',
           data: dataPoints,
-          borderColor: "#FFA922"
-        },{
+          borderColor: "#007bff",
+          lineTension: 0.000000001
+        }, {
           label: 'Fixed Demand',
           data: dataPointsFixed,
-          borderColor : '#1BC97A'
+          borderColor: '#1BC97A'
         }]
       },
       options: {
@@ -141,6 +171,13 @@ export class ModalContentComponent implements OnInit {
       }
     });
 
+  }
+
+  constructor(public activeModal: NgbActiveModal, private _data: DataService, private _sim: SimulationService) { }
+
+  async ngOnInit() {
+
+    this.drawChart();
 
   }
 
