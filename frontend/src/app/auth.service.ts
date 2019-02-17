@@ -111,7 +111,6 @@ export class AuthService {
       return false;
     }else {
       userData = this.getUserData();
-      console.log(userData);
       let token = localStorage.getItem('token');
       let type: string = '';
       if (userData['isAdmin'] == true){

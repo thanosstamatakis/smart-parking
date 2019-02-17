@@ -15,6 +15,7 @@ export class LoginComponent {
   rForm: FormGroup;
   password :string="";
   username: string="";
+  btnColor: string="primary";
 
   constructor(private _fb: FormBuilder, private _data: DataService, private _router: Router, private _auth: AuthService) { 
 
@@ -39,10 +40,18 @@ export class LoginComponent {
     }
 
     this._auth.loginUser(body).subscribe(res => {
-      console.log(res);
-      this._auth.storeToken(res);
-      this._auth.getUserData();
-      this._router.navigate(['']);
+      if (res['Token'] == null){
+        // failed login
+        this.btnColor = 'danger';
+        this._auth.getUserData();
+      }else{
+        // successful login
+        this.btnColor = 'success';
+        this._auth.storeToken(res);
+        this._auth.getUserData();
+        this._router.navigate(['']);
+      }
+
     });
 
   }
