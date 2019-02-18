@@ -1,26 +1,14 @@
 # Welcome to the Smart-Parking school project.
 
 ## Getting Started
-This is a school project, created by George Tsoulos and Thanos Stamatakis. The goal is to create a simulation of a smart city focused on smart parking. More information will be added here...
+This is a school project, created by George Tsoulos and Thanos Stamatakis. The goal is to create a simulation of a smart city based on a smart park finder website.
 
-## Requirements
-For downloading the project dependencies you will need [pip](https://pypi.org/project/pip/) and python 3.6.x. A usefull tool for handling different python versions is [pyenv](https://github.com/pyenv/pyenv). Follow the links for more instrunctions on downloading the previous programs.
+## Usage Instructions
 
-## Installation
-First clone the repository.
-```
-git clone https://github.com/thanosstamatakis/smart-parking.git
-```
-To download python dependencies you will need [pipenv](https://pipenv.readthedocs.io/en/latest/).
-```
-pip install pipenv
-```
-Navigate into the project folder and run the following command to download the dependencies.
-```
-cd smart-parking
-pipenv install --dev
-```
-To run the project run:
-```
-python app.py
-```
+### User
+
+The user can enter as guest or sign in as user and will immediately see a map with colors based on the demand for each block. He can select each block to learn more info on its population, parking slots and demand at the time. Having selected the desired block he wants to go, he can submit his desired radius of max distance from block and the system will return the best spot to park with the most available parking slots up close as well as the distance from desired block.
+
+### Admin
+
+The admin can also modify each blocks demand at a specific time and the system will consider the change for the blocks availability.
