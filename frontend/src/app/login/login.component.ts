@@ -15,7 +15,7 @@ export class LoginComponent {
   rForm: FormGroup;
   password :string="";
   username: string="";
-  btnColor: string="primary";
+  btnColor: string="light";
 
   constructor(private _fb: FormBuilder, private _data: DataService, private _router: Router, private _auth: AuthService) { 
 

@@ -149,9 +149,23 @@ export class ModalContentUnauthorizedComponent implements OnInit {
         },
         scales: {
           xAxes: [{
+            ticks: {
+              fontColor: "#f9f9f9",
+              fontSize: 10
+            },
+            gridLines: {
+              color: "rgba(0, 0, 0, 0)",
+            },
             display: true
           }],
           yAxes: [{
+            ticks: {
+              fontColor: "#f9f9f9",
+              fontSize: 10
+            },
+            gridLines: {
+              color: "rgba(0, 0, 0, 0)",
+            },
             display: true
           }]
         },

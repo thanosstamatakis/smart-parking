@@ -1,1 +1,14 @@
-<svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="clock" class="svg-inline--fa fa-clock fa-w-16" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path fill="#f1f1f1" d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm57.1 350.1L224.9 294c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h48c6.6 0 12 5.4 12 12v137.7l63.5 46.2c5.4 3.9 6.5 11.4 2.6 16.8l-28.2 38.8c-3.9 5.3-11.4 6.5-16.8 2.6z"></path></svg>
+<svg width="275" height="275" viewBox="0 0 275 275" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="137.5" cy="137.5" r="132.5" stroke="url(#paint0_linear)" stroke-width="10"/>
+<path d="M150 56V143.5L70 217.5" stroke="url(#paint1_linear)" stroke-width="10"/>
+<defs>
+<linearGradient id="paint0_linear" x1="137.5" y1="0" x2="137.5" y2="275" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F2994A"/>
+<stop offset="1" stop-color="#F2B94A"/>
+</linearGradient>
+<linearGradient id="paint1_linear" x1="110" y1="56" x2="110" y2="217.5" gradientUnits="userSpaceOnUse">
+<stop stop-color="#F2994A"/>
+<stop offset="1" stop-color="#F2B94A"/>
+</linearGradient>
+</defs>
+</svg>

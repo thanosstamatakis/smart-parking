@@ -2,5 +2,35 @@
 @import "~font-awesome/css/font-awesome.css";
 
 body{
-    background-color: #f9f9f9;
+    background-color: #37474F;
+}
+
+.modal-content{
+    background-color: #37474f !important;
+    border-radius: 0;
+    border: 0;
+}
+
+.form-control {
+    background-color: #263238;
+    color: #f9f9f9;
+    border: 0;
+    border-radius: 0.4em;
+}
+
+.nav-tabs {
+    border-bottom: 5px #263238;
+    margin-bottom: 1.5em;
+}
+
+.nav-tabs .nav-link{
+    border: 0;
+    color: #f9f9f9
+}
+
+.nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    background-color: #263238;
+    color: #f9f9f9;
+    border-bottom: 5px #263238;
+    border-radius: .4em;
 }

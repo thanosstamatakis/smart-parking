@@ -2,7 +2,7 @@
   <div class="col-lg-6 d-flex align-items-stretch col-sm-4 text-center mb-4 mx-auto">
     <div class="card" id="card-hover">
       <div class="card-body">
-        <img id="roundImage" class="card-img-top" src="assets/sprites/plus.png" alt="">
+        <img id="roundImage" class="card-img-top" src="assets/sprites/kml.png" alt="">
         <div class="card-body">
           <h2 class="card-title">Upload KML file</h2>
           <h6 class="card-subtitle mb-2 text-muted">Upload a KML file to draw new polygons on the
@@ -10,13 +10,13 @@
             map.</h6>
           <div class="input-group">
             <label class="input-group-btn">
-              <span class="btn btn-primary">
+              <span class="btn btn-light">
                 Browse&hellip; <input type="file" class="btn-file" (change)="onFileSelected($event)" style="display: none;">
               </span>
             </label>
             <input type="text" class="form-control" placeholder="{{fileName}}" readonly>
           </div>
-          <button type="button" class="btn btn-primary" (click)="onUpload()">Upload</button>
+          <button type="button" class="btn btn-primary" (click)="onUpload()">Upload KML</button>
           <p [hidden]="show">
             <ngb-progressbar class="bar" value="{{upload_msg}}"></ngb-progressbar>
           </p>
@@ -28,7 +28,7 @@
   <div class="col-lg-6 d-flex align-items-stretch col-sm-4 text-center mb-4 mx-auto">
     <div class="card" id="card-hover">
       <div class="card-body">
-        <img id="roundImage" class="card-img-top" src="assets/sprites/minus.png" alt="">
+        <img id="roundImage" class="card-img-top" src="assets/sprites/delete_db.png" alt="">
         <div class="card-body">
           <h2 class="card-title">Delete database data</h2>
           <h6 class="card-subtitle mb-2 text-muted">This will delete all the polygon data from the database.</h6>

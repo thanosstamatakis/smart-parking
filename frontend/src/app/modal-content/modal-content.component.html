@@ -18,7 +18,7 @@
         <div class="card container d-flex justify-content-center">
           <img class="card-img-top" src="../../assets/sprites/population.svg" alt="Card image cap">
           <div class="card-body population">
-            <h5 class="centered">{{blockPopulation}}</h5>
+            <h5 id="first" class="centered">{{blockPopulation}}</h5>
           </div>
         </div>
       </div>
@@ -26,7 +26,7 @@
         <div class="card container d-flex justify-content-center">
           <img class="card-img-top" src="../../assets/sprites/time.svg" alt="Card image cap">
           <div class="card-body time">
-            <h5 class="centered">{{drawTime}}</h5>
+            <h5 id="middle" class="centered">{{drawTime}}</h5>
             <!-- <h6><span style="width:2em; height:2em;" class="fas fa-chart-bar"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
           </div>
         </div>
@@ -35,7 +35,7 @@
         <div class="card container d-flex justify-content-center">
           <img class="card-img-top" src="../../assets/sprites/chart-line-solid.svg" alt="Card image cap">
           <div class="card-body demand">
-            <h5 class="centered">{{liveDemand}} %</h5>
+            <h5 id="last" class="centered">{{liveDemand}} %</h5>
             <!-- <h6><span style="width:2em; height:2em;" class="fas fa-clock"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
           </div>
         </div>
@@ -51,27 +51,41 @@
     <ngb-tab title="Modify">
       <ng-template ngbTabContent>
 
-        <div class="container d-flex justify-content-center" id="blockData">
-          <div class="row">
-            <div class="col-md" style="width:15em;">
-              <h5 class="text-center">Set Time</h5>
-              <hr>
-              <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
-            </div>
-            <div class="col-md" id="rightCol">
-              <h5 class="text-center">Modify Demand</h5>
-              <hr>
-              <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{liveDemand}}"
-                (input)="setValue($event.target)" min="0" max="100">
-            </div>
-          </div>
-        </div>
 
-        <div class="container d-flex justify-content-center">
+
+        <div id="content" class="container d-flex justify-content-center">
           <div class="row">
-              <button type="button" id="submitDemand" class="btn btn-outline-{{colorButton}}" (click)="modifyDemand()">Submit</button>
+            <div class="col">
+              <div class="card container d-flex justify-content-center">
+                <div class="card-body">
+                  <h5 class="text-center">Set Time</h5>
+                  <hr>
+                  <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card container d-flex justify-content-center">
+                <div class="card-body">
+                  <h5 class="text-center">Modify Demand</h5>
+                  <hr>
+                  <input type="range" class="form-control-range" step="1" value="{{liveDemand}}"
+                    (input)="setValue($event.target)" min="0" max="100">
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
+          </div>      
+
+          <!-- <div class="container d-flex justify-content-center">
+            <div class="row">
+                <button type="button" id="submitDemand" class="btn btn-outline-{{colorButton}}" (click)="modifyDemand()">Submit</button>
+            </div>
+          </div> -->
+
+          <div class="modal-footer d-flex justify-content-center">
+            <button type="button" id="submitDemand" class="btn btn-outline-{{colorButton}}" (click)="modifyDemand()">Submit</button>
+          </div>
 
     </ng-template>
   </ngb-tab>
@@ -79,27 +93,40 @@
   <ngb-tab title="Simulate">
       <ng-template ngbTabContent>
         
-          <div class="container d-flex justify-content-center" id="blockData">
-              <div class="row">
-                <div class="col-md" style="width:15em;">
+        <div id="content" class="container d-flex justify-content-center">
+          <div class="row">
+            <div class="col">
+              <div class="card container d-flex justify-content-center">
+                <div class="card-body">
+                  <h5 class="text-center">Distance to Walk</h5>
+                  <hr>
+                  <input type="range" class="form-control-range" step="1" value="{{walkingDistance}}"
+                  (input)="setWalkingDistance($event.target)" min="0" max="1500">
+                  <h5>{{walkingDistance}} meters.</h5>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card container d-flex justify-content-center">
+                <div class="card-body">
                   <h5 class="text-center">Set Time</h5>
                   <hr>
                   <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
                 </div>
-                <div class="col-md" id="rightCol">
-                  <h5 class="text-center">Distance to Walk</h5>
-                  <hr>
-                  <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{walkingDistance}}"
-                    (input)="setWalkingDistance($event.target)" min="0" max="1500">
-                </div>
               </div>
-            </div>            
+            </div>
+          </div>
+          </div>
+          
+          <div class="modal-footer d-flex justify-content-center">
+            <button type="button d-flex justify-content-left" class="btn btn-outline-light" (click)="closeAndSubmit()">Run Simulation</button>
+          </div>
 
       </ng-template>
   </ngb-tab>
 
 </ngb-tabset>
 
-<div class="modal-footer">
+<!-- <div class="modal-footer">
   <button type="button d-flex justify-content-left" class="btn btn-outline-primary" (click)="closeAndSubmit()">Submit</button>
-</div>
+</div> -->

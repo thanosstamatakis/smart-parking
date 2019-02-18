@@ -6,26 +6,67 @@ canvas{
     height: auto !important;
 }
 
+.modal-title {
+    color: #f1f1f1;
+}
+
+.modal-body{
+    background-color: #37474F;
+    border-top: none;
+    border-bottom: none;
+}
+
+.modal-header{
+    background-color: #37474F;
+    border-top: none;
+    border-bottom: none;
+}
+
+.text-center {
+    color: #f1f1f1;
+}
+
+.modal-dialog{
+    background-color: red;
+}
+
+hr {
+    background-color: #f1f1f1;  
+}
+
+.modal-content{
+    background-color: #37474f;
+    border-radius: 0;
+    border: 0;
+}
+
+.modal-footer{
+    background-color: #37474F;
+    border-top: none;
+    border-bottom: none;
+}
+
+.form-control {
+    background-color: #263238;
+    // color: #f9f9f9;
+}
+
+#content {
+    background-color: #37474F;
+    border-top: none;
+    border-bottom: none;
+}
+
+.close{
+    text-shadow: none;
+    outline:none;
+}
 
 .card-body {
     position: relative;
     text-align: center;
     height: 2em;
-    color: white;
-}
-
-#blockData {
-    margin-top: 2em;
-    margin-bottom: 2em;
-}
-
-#submitDemand {
-    margin-top: 1em;
-    margin-bottom: 1em;
-}
-
-.modal-footer {
-    margin-top: 1em;
+    color: #f9f9f9;
 }
 
 img {
@@ -48,12 +89,35 @@ img {
     font-family: 'Work Sans', sans-serif;
     left: 50%;
     transform: translate(-50%, -50%);
-    background-color: #007bff;
     margin-top: .2em;
     width:60%;
     padding:0.4em;
     border-radius: 2em;
     box-shadow: 0 0 6px rgba(33,33,33,.2);
+  }
+
+  #first {
+    background: #6fcf97; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #6fcf97 0%, #a5cf6f 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #6fcf97 0%,#a5cf6f 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #6fcf97 0%,#a5cf6f 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6fcf97', endColorstr='#a5cf6f',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  }
+
+  #middle {
+    background: #f2994a; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #f2994a 0%, #f2b94a 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #f2994a 0%,#f2b94a 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #f2994a 0%,#f2b94a 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2994a', endColorstr='#f2b94a',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+  }
+
+  #last{
+    background: #eb5757; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #eb5757 0%, #eb9557 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #eb5757 0%,#eb9557 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #eb5757 0%,#eb9557 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eb5757', endColorstr='#eb9557',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
   }
 
 .card {
@@ -65,6 +129,7 @@ img {
     height: 12em;
     margin-bottom: .5em;
     transition: box-shadow .3s;
+    background-color: #263238;
 }
 
 #blockInfo{
@@ -76,10 +141,10 @@ input{
     margin-top: 4em;
 }
 
-ngb-timepicker{
-    display: block;
-    margin-left: 2.2em;
-}
+// ngb-timepicker{
+//     display: block;
+//     margin-left: 2.2em;
+// }
 
 
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
 import { BehaviorSubject } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 
 @Injectable({
@@ -9,7 +10,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 })
 export class AuthService {
 
-  constructor(private _http: HttpClient) { }
+  constructor(private _http: HttpClient, private _router: Router) { }
 
   
   private realTimeToken = new BehaviorSubject<Object>(null);
@@ -101,6 +102,7 @@ export class AuthService {
   logoutUser () {
     localStorage.removeItem('token');
     //this function is used to reset the global variables username, isAdmin, isLoggedIn
+    this._router.navigate(['']);
     this.getUserData();
   }
 

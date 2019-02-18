@@ -16,6 +16,7 @@ export class NavComponent implements OnInit {
   callLogout() {
     console.log('logging out.');
     this._auth.logoutUser();
+    
   }
 
   constructor(private _auth: AuthService) { }

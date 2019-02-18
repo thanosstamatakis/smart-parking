@@ -15,7 +15,7 @@ export class ModalContentComponent implements OnInit {
   @Output() result;
 
   //initialization
-  colorButton: string = 'dark';
+  colorButton: string = 'light';
   chart: any;
   demand: Object = null;
   time: Object = { hour: 0, minute: 0 };
@@ -155,13 +155,31 @@ export class ModalContentComponent implements OnInit {
       },
       options: {
         legend: {
+          labels: {
+            fontColor: "#f9f9f9",
+            fontSize: 14
+        },
           display: true
         },
         scales: {
           xAxes: [{
+            ticks: {
+              fontColor: "#f9f9f9",
+              fontSize: 10
+            },
+            gridLines: {
+              color: "rgba(0, 0, 0, 0)",
+            },
             display: true
           }],
           yAxes: [{
+            ticks: {
+              fontColor: "#f9f9f9",
+              fontSize: 10
+            },  
+            gridLines: {
+              color: "rgba(0, 0, 0, 0)",
+          },
             display: true
           }]
         },

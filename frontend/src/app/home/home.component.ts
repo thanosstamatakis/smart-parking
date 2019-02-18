@@ -111,6 +111,13 @@ export class HomeComponent implements OnInit {
   }
 
   runSimulation(cityMap: L.Map, polygonLayer: L.FeatureGroup, input: Object) {
+
+    var customIcon = L.icon({
+      iconUrl: '../../assets/sprites/Group(1).png',
+  
+      iconSize:     [55, 45], // size of the icon
+    });
+
     this.refreshPolygons(cityMap, polygonLayer, input['time']);
     input['time'] = this.formatCurrentTime(input['time']);
     console.log(input);
@@ -127,10 +134,10 @@ export class HomeComponent implements OnInit {
     this._data.getParkingSlot(input).subscribe(res => {
       if (res[0]){
         console.log(res);
-        L.marker(res[0]['centroid']).addTo(cityMap);
+        L.marker(res[0]['centroid'], {icon: customIcon}).addTo(cityMap);
 
         L.polyline([centroid, res[0]['centroid']], {
-          color: 'red',
+          color: '#007bff',
           weight: 3,
           opacity: 0.5,
           smoothFactor: 1
@@ -196,7 +203,11 @@ export class HomeComponent implements OnInit {
 
         //Check if a block has polygon data and draw it
         if (polygon[0] != 0) {
-          polygonToAdd = L.polygon(polygon, { fillColor: colors[itteration], stroke: false, fillOpacity: 0.18 });
+          if (this.isAdmin == true){
+            polygonToAdd = L.polygon(polygon, { fillColor: 'black', stroke: false, fillOpacity: 0.18 });
+          }else{
+            polygonToAdd = L.polygon(polygon, { fillColor: colors[itteration], stroke: false, fillOpacity: 0.18 });
+          }
           polygonToAdd['polygonSpecs'] = polygonSpecs;
           polygonToAdd['polygonNumber'] = parseInt(itteration);
           polygonToAdd.addTo(polygonLayer);

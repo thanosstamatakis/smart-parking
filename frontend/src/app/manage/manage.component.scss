@@ -7,14 +7,73 @@
 
   .card {
     border: none;
+    background-color: #263238;
   }
 
   #roundImage {
-    height: 17em;
-    width: 17em;
-    margin-left: 3em;
+    // height: 17em;
+    width: 15em;
+    // margin-left: 3em;
   }
 
   #confirm {
     bottom:0;
+  }
+
+  input {
+    width: 5em;
+  }
+
+  .form-control:disabled, .form-control[readonly]{
+    background-color: #37474f;
+  }
+
+
+  .form-control{
+    border-radius: 2em;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+
+  span.btn.btn-light{
+    border-radius: 2em;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    color: #263238;
+    margin-bottom: 2em;
+  }
+
+  .card-title{
+    color: #f9f9f9;
+  }
+
+  .btn.btn-primary{
+    background: #6fcf97; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #6fcf97 0%, #a5cf6f 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #6fcf97 0%,#a5cf6f 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #6fcf97 0%,#a5cf6f 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6fcf97', endColorstr='#a5cf6f',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    border-radius: 2em;
+    border: none;
+    padding: .8em;
+    padding-left: 1.8em;
+    padding-right: 1.8em;
+  }
+
+  .btn.btn-danger{
+    background: #eb5757; /* Old browsers */
+    background: -moz-linear-gradient(-45deg, #eb5757 0%, #eb9557 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(-45deg, #eb5757 0%,#eb9557 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(135deg, #eb5757 0%,#eb9557 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eb5757', endColorstr='#eb9557',GradientType=1 ); /* IE6-9 fallback on horizontal gradient */
+    border-radius: 2em;
+    border: none;
+    padding: .8em;
+    padding-left: 1em;
+    padding-right: 1em;
+    margin-top:4.8em;
+  }
+
+  #last{
+    margin-bottom:4em;
   }

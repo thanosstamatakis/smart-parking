@@ -1,69 +1,78 @@
-<div class="modal-header d-flex justify-content-center">
-  <h1 class="modal-title">Block Information</h1>
-  <hr>
-  <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
-    <span aria-hidden="true">&times;</span>
-  </button>
-</div>
-
-<div class="modal-body">
-  <div class="container d-flex justify-content-center">
-    <canvas id="lineChart">{{ chart }}</canvas>
+<div class="modal-content">
+  <div class="modal-header d-flex justify-content-center">
+    <h1 class="modal-title">Block Information</h1>
+    <hr>
+    <button type="button" class="close" aria-label="Close" (click)="activeModal.dismiss('Cross click')">
+      <span aria-hidden="true">&times;</span>
+    </button>
   </div>
 
+  <div class="modal-body">
+    <div class="container d-flex justify-content-center">
+      <canvas id="lineChart">{{ chart }}</canvas>
+    </div>
 
-  <div class="container d-flex justify-content-center">
-    <div class="row">
-      <div class="col">
-        <div class="card container d-flex justify-content-center">
-          <img class="card-img-top" src="../../assets/sprites/population.svg" alt="Card image cap">
-          <div class="card-body population">
-            <h5 class="centered">{{blockPopulation}}</h5>
+
+    <div id="content" class="container d-flex justify-content-center">
+      <div class="row">
+        <div class="col">
+          <div class="card container d-flex justify-content-center">
+            <img class="card-img-top" src="../../assets/sprites/population.svg" alt="Card image cap">
+            <div class="card-body population">
+              <h5 id="first" class="centered">{{blockPopulation}}</h5>
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col">
-        <div class="card container d-flex justify-content-center">
-          <img class="card-img-top" src="../../assets/sprites/time.svg" alt="Card image cap">
-          <div class="card-body time">
-            <h5 class="centered">{{drawTime}}</h5>
-            <!-- <h6><span style="width:2em; height:2em;" class="fas fa-chart-bar"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
+        <div class="col">
+          <div class="card container d-flex justify-content-center">
+            <img class="card-img-top" src="../../assets/sprites/time.svg" alt="Card image cap">
+            <div class="card-body time">
+              <h5 id="middle" class="centered">{{drawTime}}</h5>
+              <!-- <h6><span style="width:2em; height:2em;" class="fas fa-chart-bar"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
+            </div>
           </div>
         </div>
-      </div>
-      <div class="col">
-        <div class="card container d-flex justify-content-center">
-          <img class="card-img-top" src="../../assets/sprites/chart-line-solid.svg" alt="Card image cap">
-          <div class="card-body demand">
-            <h5 class="centered">{{liveDemand}} %</h5>
-            <!-- <h6><span style="width:2em; height:2em;" class="fas fa-clock"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
+        <div class="col">
+          <div class="card container d-flex justify-content-center">
+            <img class="card-img-top" src="../../assets/sprites/chart-line-solid.svg" alt="Card image cap">
+            <div class="card-body demand">
+              <h5 id="last" class="centered">{{liveDemand}} %</h5>
+              <!-- <h6><span style="width:2em; height:2em;" class="fas fa-clock"></span> demand for {{drawTime}}:{{liveDemand}}</h6> -->
+            </div>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-</div>
 
-
-
-
-<div class="container d-flex justify-content-center" id="blockData">
+  <div id="content" class="container d-flex justify-content-center">
   <div class="row">
-    <div class="col-md" style="width:15em;">
-      <h5 class="text-center">Set Time</h5>
-      <hr>
-      <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
+    <div class="col">
+      <div class="card container d-flex justify-content-center">
+        <div class="card-body">
+          <h5 class="text-center">Distance to Walk</h5>
+          <hr>
+          <input type="range" class="form-control-range" step="1" value="{{walkingDistance}}"
+          (input)="setValue($event.target)" min="0" max="1500">
+          <h5>{{walkingDistance}} meters.</h5>
+        </div>
+      </div>
     </div>
-    <div class="col-md" id="rightCol">
-      <h5 class="text-center">Distance to Walk</h5>
-      <hr>
-      <input type="range" class="form-control-range" style="width: 15em;" id="formControlRange" step="1" value="{{walkingDistance}}"
-        (input)="setValue($event.target)" min="0" max="1500">
+    <div class="col">
+      <div class="card container d-flex justify-content-center">
+        <div class="card-body">
+          <h5 class="text-center">Set Time</h5>
+          <hr>
+          <ngb-timepicker [(ngModel)]="time" (click)="timePickerInput($event)"></ngb-timepicker>
+        </div>
+      </div>
     </div>
   </div>
-</div>
+  </div>
 
-<div class="modal-footer">
-  <button type="button d-flex justify-content-left" class="btn btn-outline-dark" (click)="closeAndSubmit()">Submit</button>
+  <div class="modal-footer d-flex justify-content-center">
+    <button type="button" class="btn btn-outline-light" (click)="closeAndSubmit()">Run Simulation</button>
+  </div>
 </div>
