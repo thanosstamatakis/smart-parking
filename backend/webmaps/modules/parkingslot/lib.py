@@ -25,10 +25,12 @@ def get_clusters(user_location, radius, time):
     close_centroids = get_close_centroids(user_location, radius)
     LOGGER.debug(f'CLOSE CLUSTERS: {len(close_centroids)}')
     parking_slots = get_parking_slots(close_centroids, time)
-
-    slots = list(parking_slots.values())[0]
+    try:
+        slots = list(parking_slots.values())[0]
+    except IndexError:
+        slots = None
     if not slots:
-        return slots
+        return []
     slots = np.array(slots)
     parking_slot_cluster = ParkingSlotsCluster(slots, user_location)
     clusters = parking_slot_cluster.get_clusters()
