@@ -12,3 +12,12 @@ The user can enter as guest or sign in as user and will immediately see a map wi
 ### Admin
 
 The admin can also modify each blocks demand at a specific time and the system will consider the change for the blocks availability.
+
+## Installation Instructions
+
+Backend
+* https://github.com/thanosstamatakis/smart-parking/tree/master/backend
+  
+Frontend
+
+* https://github.com/thanosstamatakis/smart-parking/tree/master/frontend
