@@ -5,7 +5,7 @@ import logging
 
 
 class Config(object):
-    """Configuration class for ci dashboard backend."""
+    """Configuration class for smart-parking backend."""
 
     def __init__(self):
         """ Class constructor """
