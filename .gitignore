@@ -6,3 +6,4 @@ dist/
 
 # Config file
 /backend/config/*
+/frontend/node_modules/*
